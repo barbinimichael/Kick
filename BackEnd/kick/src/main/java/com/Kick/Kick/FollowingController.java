@@ -58,11 +58,10 @@ public class FollowingController extends Controller {
       user.addInfluencer(newFollowing);
       influencer.addFollower(newFollowing);
 
-      if (followingRepository.findByFollowerUsernameAndInfluencerUsername(user.getUsername(), influencer.getUsername()).isEmpty()) {
-        logger.info("Found already!!!");
-        this.followingRepository.save(newFollowing);
+      if (!influencer.isPrivateProfile()) {
+        newFollowing.setAccepted(true);
       }
-      logger.info("Saving new following!!!");
+      this.followingRepository.save(newFollowing);
       return handleSuccess("Saved following");
     } else {
       return handleNotFound(username);
