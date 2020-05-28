@@ -129,7 +129,7 @@ public class DatabaseLoader implements CommandLineRunner {
     Post p = new Post(generateRandomString("caption:"),
         generateRandomString("imageURL:"),
         generateRandomString("city:"),
-        generateRandomString("country"),
+        generateRandomString("country:"),
         "2020-01-01",
         newUser);
 

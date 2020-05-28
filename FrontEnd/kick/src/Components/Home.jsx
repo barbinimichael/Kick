@@ -6,17 +6,14 @@ import Feed from "./Feed";
 import Dashboard from "./Dashboard";
 
 class Home extends Component {
-  state = { user: "", feed: [] };
+  state = { user: [], feed: [], liked: [] };
 
   componentDidMount() {
-    let username = "";
-
     API({
       method: "get",
       url: "api/applicationUsers/self",
     })
       .then((response) => {
-        console.log(response);
         this.setState({ user: response.data });
       })
       .catch((error) => {
@@ -28,26 +25,40 @@ class Home extends Component {
       url: "api/posts/feed",
     })
       .then((response) => {
-        console.log(response);
-        const feed = response.data.content;
-
-        if (feed.length > 0) {
-          this.setState({ feed });
-        }
+        let feed = response.data.content;
+        this.setState({ feed });
+        return feed;
+      })
+      .then((feed) => {
+        let requests = feed.map((post) => this.handleLiked(post));
+        Promise.all(requests).then((values) => {
+          console.log("REQUESTS:", values);
+          let liked = values.map((like) => like.data);
+          console.log("LIKED", liked);
+          this.setState({ liked });
+        });
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
+  handleLiked = (post) => {
+    return API({
+      method: "get",
+      url: `api/posts/${post.id}/liked`,
+    });
+  };
+
   render() {
+    console.log(this.state);
     return (
       <div>
         <Container fluid>
           <Row>
             <Col lg="3"></Col>
             <Col lg="6">
-              <Feed feed={this.state.feed} />
+              <Feed feed={this.state.feed} liked={this.state.liked} />
             </Col>
             <Col lg="3" className="Sidebar sticky-top">
               <Dashboard />

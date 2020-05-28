@@ -42,6 +42,12 @@ public class Controller {
         .body(new ApiError("Request parameter not found", errorValue));
   }
 
+  protected ResponseEntity<ApiError> handleBadRequest(String errorValue) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(new ApiError("Bad request", errorValue));
+  }
+
   protected boolean checkFollowing(ApplicationUser follower, ApplicationUser influencer) {
     Set<Following> influencers = follower.getWhereIsInfluencer();
 

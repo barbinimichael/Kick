@@ -3,6 +3,7 @@ package com.Kick.Kick;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,7 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @RestController
 public class PostController extends Controller {
@@ -44,7 +53,8 @@ public class PostController extends Controller {
         users.add(following.getInfluencer());
       }
     }
-    return ResponseEntity.ok(postRepository.findByUserIn(users, pageable));
+    Page<Post> feed = postRepository.findByUserIn(users, pageable);
+    return ResponseEntity.ok(feed);
   }
 
   // page, size, sort
@@ -83,9 +93,10 @@ public class PostController extends Controller {
     postRepository.save(newPost);
     return handleSuccess("Saved post");
   }
+
   @PutMapping("/api/posts")
   public ResponseEntity editPost(Authentication authentication, @RequestParam("id") Long id, @RequestBody Post newPost) {
-    Optional<Post> maybePost =  postRepository.findById(id);
+    Optional<Post> maybePost = postRepository.findById(id);
 
     if (maybePost.isPresent()) {
       ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
@@ -113,7 +124,7 @@ public class PostController extends Controller {
 
   @DeleteMapping("/api/posts")
   public ResponseEntity deletePost(Authentication authentication, @RequestParam("id") Long id) {
-    Optional<Post> maybePost =  postRepository.findById(id);
+    Optional<Post> maybePost = postRepository.findById(id);
 
     if (maybePost.isPresent()) {
       ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
