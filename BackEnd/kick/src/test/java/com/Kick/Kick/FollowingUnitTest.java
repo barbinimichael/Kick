@@ -1,15 +1,5 @@
 package com.Kick.Kick;
 
-import com.Kick.Kick.ApplicationUser;
-import com.Kick.Kick.ApplicationUserController;
-import com.Kick.Kick.ApplicationUserRepository;
-import com.Kick.Kick.Following;
-import com.Kick.Kick.FollowingController;
-import com.Kick.Kick.FollowingRepository;
-import com.Kick.Kick.Post;
-import com.Kick.Kick.PostController;
-import com.Kick.Kick.PostRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -236,10 +226,10 @@ public class FollowingUnitTest {
     assertEquals(following, followingController.getFollowing(new MockAuthentication(m), following.getId()).getBody());
 
     ApplicationUser mFollowing = applicationUserRepository.findByUsername(m.getUsername()).get();
-    assertTrue(mFollowing.getInfluencers().contains(following));
+    assertTrue(mFollowing.getWhereIsInfluencer().contains(following));
 
     ApplicationUser mTwoFollowing = applicationUserRepository.findByUsername(mTwo.getUsername()).get();
-    assertTrue(mTwoFollowing.getFollowers().contains(following));
+    assertTrue(mTwoFollowing.getWhereIsFollower().contains(following));
   }
 
   @Test

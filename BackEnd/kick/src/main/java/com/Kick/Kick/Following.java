@@ -2,6 +2,9 @@ package com.Kick.Kick;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -29,12 +32,18 @@ public class Following {
 
   private boolean accepted;
 
+  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
   public Following() {}
 
   public Following(ApplicationUser follower, ApplicationUser influencer) {
     this.influencer = influencer;
     this.follower = follower;
     this.accepted = false;
+
+    logger.info("in following");
+    logger.info(influencer.getUsername());
+    logger.info(follower.getUsername());
   }
 
   public Long getId() {

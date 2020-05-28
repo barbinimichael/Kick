@@ -1,14 +1,5 @@
 package com.Kick.Kick;
 
-import com.Kick.Kick.ApplicationUser;
-import com.Kick.Kick.ApplicationUserRepository;
-import com.Kick.Kick.Following;
-import com.Kick.Kick.FollowingRepository;
-import com.Kick.Kick.MockAuthentication;
-import com.Kick.Kick.Post;
-import com.Kick.Kick.PostController;
-import com.Kick.Kick.PostRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -23,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.transaction.Transactional;
@@ -156,9 +148,9 @@ public class PostUnitTest {
         new HashSet<>(),
         new HashSet<>());
 
-    following = new Following(mTwo, m);
+    following = new Following(m, mTwo);
     following.setAccepted(true);
-    followingTwo = new Following(m, mTwo);
+    followingTwo = new Following(m, mThree);
     followingTwo.setAccepted(true);
 
     applicationUserRepository.save(m);
@@ -175,8 +167,8 @@ public class PostUnitTest {
     followingRepository.save(following);
     followingRepository.save(followingTwo);
 
-    m.addFollower(following);
-    m.addInfluencer(followingTwo);
+    m.addWhereIsInfluencer(following);
+    m.addWhereIsInfluencer(followingTwo);
     m.addPost(p);
     m.addPost(pTwo);
     p.setUser(m);
@@ -185,8 +177,8 @@ public class PostUnitTest {
     postRepository.save(p);
     postRepository.save(pTwo);
 
-    mTwo.addInfluencer(following);
-    mTwo.addFollower(followingTwo);
+    mThree.addWhereIsFollower(followingTwo);
+    mTwo.addWhereIsFollower(following);
     mTwo.addPost(pThree);
     pThree.setUser(mTwo);
     applicationUserRepository.save(mTwo);
@@ -209,11 +201,11 @@ public class PostUnitTest {
     Pageable pageable = PageRequest.of(0, 5);
 
     ResponseEntity mFeed = postController.getFeed(new MockAuthentication(m), pageable);
-    PageImpl mResultFeed = new PageImpl(Arrays.asList(pThree));
+    PageImpl mResultFeed = new PageImpl(Arrays.asList(pThree, pFour));
     assertEquals(mResultFeed.getContent().toString(), ((PageImpl) mFeed.getBody()).getContent().toString());
 
     ResponseEntity mTwoFeed = postController.getFeed(new MockAuthentication(mTwo), pageable);
-    PageImpl mTwoResultFeed = new PageImpl(Arrays.asList(p, pTwo));
+    PageImpl mTwoResultFeed = new PageImpl(Collections.emptyList());
     assertEquals(mTwoResultFeed.getContent().toString(), ((PageImpl) mTwoFeed.getBody()).getContent().toString());
   }
 

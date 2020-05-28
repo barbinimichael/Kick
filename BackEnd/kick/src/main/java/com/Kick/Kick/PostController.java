@@ -35,10 +35,12 @@ public class PostController extends Controller {
   // page, size, sort
   @GetMapping("/api/posts/feed")
   public ResponseEntity getFeed(Authentication authentication, Pageable pageable) {
+    logger.info("logged in: " + authentication.getName());
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     ArrayList<ApplicationUser> users = new ArrayList<>();
-    for (Following following : user.getInfluencers()) {
+    for (Following following : user.getWhereIsFollower()) {
       if (following.isAccepted()) {
+        logger.info("Influencer: " + following.getInfluencer().getUsername());
         users.add(following.getInfluencer());
       }
     }

@@ -3,6 +3,7 @@ package com.Kick.Kick;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
@@ -48,15 +49,14 @@ public class FollowingController extends Controller {
   }
 
   @PostMapping("/api/followings")
-  public ResponseEntity follow(Authentication authentication, String username) {
+  public ResponseEntity follow(Authentication authentication, @Param("username") String username) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
 
     if (maybeInfluencer.isPresent()) {
+      logger.info("In following controller- post");
       ApplicationUser influencer = maybeInfluencer.get();
       Following newFollowing = new Following(user, influencer);
-      user.addInfluencer(newFollowing);
-      influencer.addFollower(newFollowing);
 
       if (!influencer.isPrivateProfile()) {
         newFollowing.setAccepted(true);
@@ -77,7 +77,7 @@ public class FollowingController extends Controller {
       Following following = maybeFollowing.get();
 
       // check that it is the user who accepting is the user that was being requested
-      if (user.getFollowers().contains(following)) {
+      if (user.getWhereIsInfluencer().contains(following)) {
         if (condition) {
           following.setAccepted(true);
           followingRepository.save(following);

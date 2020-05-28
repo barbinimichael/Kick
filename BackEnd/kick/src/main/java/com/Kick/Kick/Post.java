@@ -31,21 +31,23 @@ public class Post {
 
   @OneToMany(mappedBy = "post",
       orphanRemoval = true)
-  @JsonManagedReference(value="post-like_post")
+  @JsonManagedReference(value = "post-like_post")
   private Set<LikePost> likes;
 
   @OneToMany(mappedBy = "post",
       orphanRemoval = true)
-  @JsonManagedReference(value="post-comment_post")
+  @JsonManagedReference(value = "post-comment_post")
   private Set<CommentPost> comments;
 
+  private String username;
   private String caption;
   private String imageURL;
   private String city;
   private String country;
   private Instant postDate;
 
-  public Post() {}
+  public Post() {
+  }
 
   public Post(String caption,
               String imageURL,
@@ -56,9 +58,25 @@ public class Post {
         imageURL,
         city,
         country,
-        LocalDate.parse(postDate).atStartOfDay(ZoneId.of("UTC")).toInstant(),
+        postDate,
+        null);
+  }
+
+  public Post(String caption,
+              String imageURL,
+              String city,
+              String country,
+              String postDate,
+              ApplicationUser user) {
+    this(caption,
+        imageURL,
+        city,
+        country,
+        LocalDate.parse(
+            postDate).atStartOfDay(ZoneId.of("UTC")).toInstant(),
         new HashSet<>(),
-        new HashSet<>());
+        new HashSet<>(),
+        user);
   }
 
   public Post(String caption,
@@ -68,6 +86,24 @@ public class Post {
               Instant postDate,
               Set<LikePost> likes,
               Set<CommentPost> comments) {
+    this(caption,
+        imageURL,
+        city,
+        country,
+        postDate,
+        likes,
+        comments,
+        null);
+  }
+
+  public Post(String caption,
+              String imageURL,
+              String city,
+              String country,
+              Instant postDate,
+              Set<LikePost> likes,
+              Set<CommentPost> comments,
+              ApplicationUser user) {
     this.caption = caption;
     this.imageURL = imageURL;
     this.city = city;
@@ -76,6 +112,11 @@ public class Post {
 
     this.likes = likes;
     this.comments = comments;
+
+    this.user = user;
+    if (user != null) {
+      this.username = user.getUsername();
+    }
   }
 
   public Long getId() {
@@ -132,6 +173,7 @@ public class Post {
 
   public void setUser(ApplicationUser user) {
     this.user = user;
+    this.username = user.getUsername();
   }
 
   public Set<LikePost> getLikes() {
@@ -158,6 +200,14 @@ public class Post {
     this.comments.add(comment);
   }
 
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -180,6 +230,7 @@ public class Post {
   public String toString() {
     return "Post{" +
         "id=" + id +
+        ", user=" + username + '\'' +
         ", caption='" + caption + '\'' +
         ", imageURL='" + imageURL + '\'' +
         ", city='" + city + '\'' +

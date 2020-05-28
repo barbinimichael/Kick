@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -87,12 +89,12 @@ public class ApplicationUser {
   @OneToMany(mappedBy = "influencer",
       orphanRemoval = true)
   @JsonManagedReference(value = "following-influencer")
-  private Set<Following> influencers;
+  private Set<Following> whereIsInfluencer;
 
   @OneToMany(mappedBy = "follower",
       orphanRemoval = true)
   @JsonManagedReference(value = "following-follower")
-  private Set<Following> followers;
+  private Set<Following> whereIsFollower;
 
   @OneToMany(mappedBy = "user",
       orphanRemoval = true)
@@ -103,6 +105,8 @@ public class ApplicationUser {
       orphanRemoval = true)
   @JsonManagedReference
   private Set<CommentPost> comments;
+
+  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   public ApplicationUser() {
   }
@@ -195,8 +199,8 @@ public class ApplicationUser {
     this.setPassword(password);
 
     this.posts = posts;
-    this.followers = followers;
-    this.influencers = influencers;
+    this.whereIsFollower = followers;
+    this.whereIsInfluencer = influencers;
     this.comments = comments;
     this.likes = likes;
 
@@ -324,36 +328,42 @@ public class ApplicationUser {
     this.email = email;
   }
 
-  public Set<Following> getInfluencers() {
-    return this.influencers;
+  public Set<Following> getWhereIsInfluencer() {
+    return this.whereIsInfluencer;
   }
 
-  public void setInfluencers(Set<Following> influencers) {
-    if (influencers == null) {
-      this.influencers = new HashSet<>();
+  public void setWhereIsInfluencer(Set<Following> whereIsInfluencer) {
+    if (whereIsInfluencer == null) {
+      this.whereIsInfluencer = new HashSet<>();
     } else {
-      this.influencers = influencers;
+      this.whereIsInfluencer = whereIsInfluencer;
     }
   }
 
-  public void addInfluencer(Following influencer) {
-    this.influencers.add(influencer);
+  public void addWhereIsInfluencer(Following influencer) {
+    logger.info("In user: " + username);
+    logger.info("influencer " + influencer.getInfluencer());
+    logger.info("follower " + influencer.getFollower());
+    this.whereIsInfluencer.add(influencer);
   }
 
-  public Set<Following> getFollowers() {
-    return followers;
+  public Set<Following> getWhereIsFollower() {
+    return whereIsFollower;
   }
 
-  public void setFollowers(Set<Following> followers) {
-    if (followers == null) {
-      this.followers = new HashSet<>();
+  public void setWhereIsFollower(Set<Following> whereIsFollower) {
+    if (whereIsFollower == null) {
+      this.whereIsFollower = new HashSet<>();
     } else {
-      this.followers = followers;
+      this.whereIsFollower = whereIsFollower;
     }
   }
 
-  public void addFollower(Following follower) {
-    this.followers.add(follower);
+  public void addWhereIsFollower(Following follower) {
+    logger.info("In user: " + username);
+    logger.info("influencer " + follower.getInfluencer());
+    logger.info("follower " + follower.getFollower());
+    this.whereIsFollower.add(follower);
   }
 
   public Set<LikePost> getLikes() {
@@ -419,8 +429,8 @@ public class ApplicationUser {
         this.profilePictureURL,
         true,
         this.posts,
-        this.influencers,
-        this.followers,
+        this.whereIsInfluencer,
+        this.whereIsFollower,
         this.likes,
         this.comments);
   }

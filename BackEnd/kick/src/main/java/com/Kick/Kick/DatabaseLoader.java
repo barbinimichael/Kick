@@ -2,11 +2,17 @@ package com.Kick.Kick;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Random;
 
 /**
  * Responsible for loading example data into the database.
@@ -19,25 +25,35 @@ public class DatabaseLoader implements CommandLineRunner {
   private final FollowingRepository followingRepository;
   private final LikePostRepository likePostRepository;
   private final CommentPostRepository commentPostRepository;
+  private final ApplicationUserController applicationUserController;
+  private final FollowingController followingController;
+  private final PostController postController;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+  private ArrayList<ApplicationUser> users = new ArrayList<>();
+  private ApplicationUser m;
 
   @Autowired
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,
                         PostRepository postRepository,
                         FollowingRepository followingRepository,
-                        LikePostRepository likePostRepository, CommentPostRepository commentPostRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+                        LikePostRepository likePostRepository, CommentPostRepository commentPostRepository, ApplicationUserController applicationUserController, FollowingController followingController, PostController postController, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
     this.followingRepository = followingRepository;
     this.likePostRepository = likePostRepository;
     this.commentPostRepository = commentPostRepository;
+    this.applicationUserController = applicationUserController;
+    this.followingController = followingController;
+    this.postController = postController;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
   @Override
+  @Transactional
   public void run(String... strings) throws Exception {
 
-    ApplicationUser m = new ApplicationUser("mbarbzzz",
+    m = new ApplicationUser("mbarbzzz",
         "password",
         "Mike",
         "B",
@@ -77,33 +93,110 @@ public class DatabaseLoader implements CommandLineRunner {
         new HashSet<>(),
         new HashSet<>());
 
-    Following following = new Following(mTwo, m);
+    applicationUserController.signUp(m);
+    applicationUserController.signUp(mTwo);
 
-    LikePost likeOne = new LikePost(mTwo, p);
+    followingController.follow(new MockAuthentication(m), mTwo.getUsername());
+    followingController.acceptFollower(new MockAuthentication(mTwo), followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), mTwo.getUsername()).get().getId(), true);
 
-    mTwo.addLike(likeOne);
+    postController.newPost(new MockAuthentication(mTwo), p);
+    postController.newPost(new MockAuthentication(mTwo), pTwo);
 
-    m.addFollower(following);
-    mTwo.addInfluencer(following);
+    users.add(m);
 
-    p.setUser(m);
-    pTwo.setUser(m);
+    for (int i = 0; i < 100; i++) {
+      createRandomUser();
+    }
+  }
 
-    m.addPost(p);
-    m.addPost(pTwo);
+  void createRandomUser() {
+    ApplicationUser newUser = new ApplicationUser(
+        generateRandomString("username:"),
+        generateRandomString("password:"),
+        generateRandomString("firstName:"),
+        generateRandomString("lastName:"),
+        generateRandomString("email:"),
+        Instant.now(),
+        generateRandomString("city:"),
+        generateRandomString("country:"),
+        Gender.OTHER,
+        generateRandomString("biography:"),
+        generateRandomString("profilePic:"),
+        generateRandomBoolean()
+    );
+    applicationUserController.signUp(newUser);
 
-    m.setPassword(bCryptPasswordEncoder.encode(m.getPassword()));
-    this.applicationUserRepository.save(m);
+    Post p = new Post(generateRandomString("caption:"),
+        generateRandomString("imageURL:"),
+        generateRandomString("city:"),
+        generateRandomString("country"),
+        "2020-01-01",
+        newUser);
 
-    mTwo.setPassword(bCryptPasswordEncoder.encode(mTwo.getPassword()));
-    this.applicationUserRepository.save(mTwo);
+    postController.newPost(new MockAuthentication(newUser), p);
 
-    this.postRepository.save(p);
-    this.postRepository.save(pTwo);
+    followingController.follow(new MockAuthentication(m), newUser.getUsername());
+    followingController.acceptFollower(new MockAuthentication(newUser),
+        followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), newUser.getUsername()).get().getId(), true);
 
-    this.followingRepository.save(following);
+    users.add(newUser);
+  }
 
-    this.likePostRepository.save(likeOne);
+  String generateRandomString(String starter) {
+    StringBuilder randomString = new StringBuilder(starter);
+    Random r = new Random();
+    for (int i = 0; i < r.nextInt(3) + 4; i++) {
+      randomString.append((char) (r.nextInt(26) + 'a'));
+    }
+    return randomString.toString();
+  }
 
+  boolean generateRandomBoolean() {
+    Random r = new Random();
+    return r.nextBoolean();
+  }
+}
+
+class MockAuthentication implements Authentication {
+
+  private String name;
+
+  public MockAuthentication(ApplicationUser user) {
+    this.name = user.getUsername();
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public Object getCredentials() {
+    return null;
+  }
+
+  @Override
+  public Object getDetails() {
+    return null;
+  }
+
+  @Override
+  public Object getPrincipal() {
+    return null;
+  }
+
+  @Override
+  public boolean isAuthenticated() {
+    return true;
+  }
+
+  @Override
+  public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

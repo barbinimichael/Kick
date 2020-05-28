@@ -7,15 +7,51 @@ import Row from "react-bootstrap/Row";
 import Nav from "react-bootstrap/Nav";
 import history from "./History";
 import logo from "../logo.svg";
+import API from "../api/api";
+
+import { useLocation } from "react-router-dom";
 
 class SignIn extends Component {
-  state = { username: "", password: "" };
+  state = { username: "", password: "", failed: false, login: false };
 
-  handleAuthentication = () => {
-    localStorage.setItem("user", "username");
-    localStorage.setItem("Authorization", "password");
-    history.push("/");
-  };
+  constructor(props) {
+    super(props);
+    this.handleAuthentication = this.handleAuthentication.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  async handleAuthentication(e) {
+    e.preventDefault();
+    await API({
+      method: "post",
+      url: "/login",
+      data: {
+        username: this.state.username,
+        password: this.state.password,
+      },
+      headers: {},
+    })
+      .then((response) => {
+        console.log(response);
+        localStorage.setItem("user", this.state.username);
+        localStorage.setItem("Authorization", response.headers.authorization);
+        this.setState({ login: true });
+        history.push("/");
+        window.location.reload(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({ failed: true });
+      });
+  }
+
+  handleChange(evt) {
+    console.log("handle login input change", evt.target.value);
+    const value = evt.target.value;
+    this.setState({
+      [evt.target.name]: value,
+    });
+  }
 
   render() {
     return (
@@ -25,21 +61,32 @@ class SignIn extends Component {
             <Col lg="3"></Col>
             <Col lg="6">
               <Form>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email" />
-                  <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                  </Form.Text>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="username"
+                    placeholder="Enter username"
+                    onChange={this.handleChange}
+                    name="username"
+                  />
                 </Form.Group>
 
                 <Form.Group controlId="formBasicPassword">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" placeholder="Password" />
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    onChange={this.handleChange}
+                    name="password"
+                  />
                 </Form.Group>
-                <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check type="checkbox" label="Remember Me" />
-                </Form.Group>
+                {this.state.failed === true ? (
+                  <Form.Text className="text-muted">
+                    The username or password you provided was incorrect
+                  </Form.Text>
+                ) : (
+                  <React.Fragment />
+                )}
                 <Button
                   variant="primary"
                   type="submit"
