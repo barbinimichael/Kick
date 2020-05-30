@@ -3,7 +3,6 @@ package com.Kick.Kick;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
@@ -13,10 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 public class LikePostController extends Controller {
@@ -97,6 +93,31 @@ public class LikePostController extends Controller {
 
       } else {
         return handleBadCredentials(authentication.getName());
+      }
+
+    } else {
+      return handleNotFound(id.toString());
+    }
+  }
+
+  @DeleteMapping("/api/posts/{id}/likePosts")
+  public ResponseEntity deleteLikeFromPost(
+      Authentication authentication, @PathVariable @NonNull Long id) {
+
+    Optional<Post> maybePost = postRepository.findById(id);
+
+    if (maybePost.isPresent()) {
+      ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+      Post post = maybePost.get();
+
+      Optional<LikePost> maybeLike = likePostRepository.findByUserAndPost(user, post);
+
+      if (maybeLike.isPresent()) {
+        LikePost like = maybeLike.get();
+        likePostRepository.delete(like);
+        return handleSuccess("Deleted like successfully");
+      } else {
+        return handleNotFound(id.toString());
       }
 
     } else {
