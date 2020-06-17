@@ -11,74 +11,27 @@ import chat from "bootstrap-icons/icons/chat.svg";
 import logo from "../logo.svg";
 
 class Post extends Component {
-  constructor(props) {
-    super(props);
-    console.log("og props", this.props);
+  state = {
+    comment: "",
+  };
 
-    this.state = {
-      liked: "",
-      numLikes: "",
-      firstUpdate: false,
-      comment: "",
-      submitted: false,
-    };
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    console.log("derive", state);
-    console.log("props", props);
-    if (state.liked === "" || state.liked === undefined) {
-      return {
-        liked: props.liked,
-        numLikes: props.post.likes.length,
-        firstUpdate: true,
-      };
+  onLike = () => {
+    // if not liked, like, otherwise unlike
+    if (!this.props.liked) {
+      this.props.handleUserLiked(this.props.post.id);
     } else {
-      return state;
-    }
-  }
-
-  handleLike = () => {
-    console.log("state 1", this.state);
-
-    if (!this.state.liked) {
-      API({
-        method: "post",
-        url: `api/posts/${this.props.post.id}/likePosts`,
-      }).then(() => {
-        this.setState({
-          liked: true,
-          numLikes: this.state.numLikes + 1,
-        });
-      });
-    } else {
-      API({
-        method: "delete",
-        url: `api/posts/${this.props.post.id}/likePosts`,
-      }).then(() => {
-        this.setState({
-          liked: false,
-          numLikes: this.state.numLikes - 1,
-        });
-      });
+      this.props.handleUserUnLiked(this.props.post.id);
     }
   };
 
-  handleCommentChange = (event) => {
+  onCommentChange = (event) => {
     this.setState({ comment: event.target.value });
   };
 
-  handleCommentSubmit = (event) => {
+  onCommentSubmit = (event) => {
     event.preventDefault();
     console.log(this.state.comment);
-
-    API({
-      method: "post",
-      url: `api/posts/${this.props.post.id}/commentPosts`,
-      data: this.state.comment,
-    }).then(() => {
-      this.setState({ submitted: true });
-    });
+    this.props.handleUserCommented(this.props.post.id, this.state.comment);
   };
 
   setComments = () => {
@@ -86,26 +39,19 @@ class Post extends Component {
     let displayComments = [""];
     if (comments.length !== 0) {
       displayComments = [comments[comments.length - 1].comment];
-      if (this.state.submitted) {
-        displayComments.push(this.state.comment);
-        this.setState({ submitted: false });
-      }
-      console.log("displaytComments", displayComments);
     }
-    console.log("All comments", comments);
 
     return displayComments;
   };
 
   render() {
-    console.log("render", this.state);
     return (
       <Card>
         <Card.Header>{this.props.post.username}</Card.Header>
         <Card.Img variant="top" src={logo} />
         <Card.Body>
-          <Button variant="link" onClick={this.handleLike}>
-            {this.state.liked ? (
+          <Button variant="link" onClick={this.onLike}>
+            {this.props.liked ? (
               <Image src={heartFill} alt="" />
             ) : (
               <Image src={heart} alt="" />
@@ -114,8 +60,8 @@ class Post extends Component {
           <Button variant="link">
             <img src={chat} alt="" />
           </Button>
-          <Card.Title>{this.state.numLikes} likes</Card.Title>
-          {this.setComments("").map((comment) => (
+          <Card.Title>{this.props.post.likes.length} likes</Card.Title>
+          {this.setComments().map((comment) => (
             <Card.Text>{comment}</Card.Text>
           ))}
           <Card.Text>{this.props.post.caption}</Card.Text>
@@ -129,13 +75,10 @@ class Post extends Component {
             placeholder="Add a comment..."
             aria-label="Comment"
             aria-describedby="basic-addon2"
-            onChange={this.handleCommentChange}
+            onChange={this.onCommentChange}
           />
           <InputGroup.Append>
-            <Button
-              variant="outline-secondary"
-              onClick={this.handleCommentSubmit}
-            >
+            <Button variant="outline-secondary" onClick={this.onCommentSubmit}>
               Post
             </Button>
           </InputGroup.Append>

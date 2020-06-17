@@ -54,15 +54,14 @@ public class FollowingController extends Controller {
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
 
     if (maybeInfluencer.isPresent()) {
-      logger.info("In following controller- post");
       ApplicationUser influencer = maybeInfluencer.get();
       Following newFollowing = new Following(user, influencer);
 
       if (!influencer.isPrivateProfile()) {
         newFollowing.setAccepted(true);
       }
-      this.followingRepository.save(newFollowing);
-      return handleSuccess("Saved following");
+      return ResponseEntity.ok(followingRepository.save(newFollowing));
+
     } else {
       return handleNotFound(username);
     }
@@ -80,8 +79,7 @@ public class FollowingController extends Controller {
       if (user.getWhereIsInfluencer().contains(following)) {
         if (condition) {
           following.setAccepted(true);
-          followingRepository.save(following);
-          return handleSuccess("Accepted following");
+          return ResponseEntity.ok(followingRepository.save(following));
 
         } else {
           followingRepository.delete(following);

@@ -1,5 +1,7 @@
 package com.Kick.Kick;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @RestController
 public class CommentPostController extends Controller {
+
+  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private final CommentPostRepository commentPostRepository;
   private final ApplicationUserRepository applicationUserRepository;
@@ -38,7 +42,8 @@ public class CommentPostController extends Controller {
         CommentPost commentPost = maybeComment.get();
 
         if (!commentPost.getUser().isPrivateProfile() || user.equals(commentPost.getUser()) || checkFollowing(user, commentPost.getUser())) {
-          return ResponseEntity.ok(maybeComment.get());
+          return ResponseEntity.ok(commentPost);
+
         } else {
           return handleBadCredentials(authentication.getName());
         }
@@ -50,6 +55,7 @@ public class CommentPostController extends Controller {
 
   @PostMapping("/api/posts/{id}/commentPosts")
   public ResponseEntity comment(Authentication authentication, @PathVariable @NonNull Long id, @RequestBody String comment) {
+    logger.info("CommentPostController post comment: " + comment);
 
     Optional<Post> maybePost = postRepository.findById(id);
 
@@ -62,7 +68,7 @@ public class CommentPostController extends Controller {
         commentPostRepository.save(commentPost);
         post.addComment(commentPost);
         postRepository.save(post);
-        return handleSuccess("Saved new comment");
+        return ResponseEntity.ok(post);
 
       } else {
         return handleBadCredentials(authentication.getName());
@@ -76,6 +82,7 @@ public class CommentPostController extends Controller {
   @PutMapping("/api/commentPosts/{id}")
   public ResponseEntity editComment(@AuthenticationPrincipal ApplicationUser user, @PathVariable @NonNull Long id, @RequestBody String comment) {
       Optional<CommentPost> maybeCommentPost =  commentPostRepository.findById(id);
+      logger.info("CommentPostController edit comment: " + comment);
 
       if (maybeCommentPost.isPresent()) {
         CommentPost commentPost = maybeCommentPost.get();

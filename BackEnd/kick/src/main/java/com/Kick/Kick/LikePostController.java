@@ -41,6 +41,7 @@ public class LikePostController extends Controller {
 
       if (post.getLikes().stream().map(LikePost::getUser).anyMatch(n -> n.equals(user))) {
         return ResponseEntity.ok(true);
+
       } else {
         return ResponseEntity.ok(false);
       }
@@ -59,6 +60,7 @@ public class LikePostController extends Controller {
 
       if (!likePost.getUser().isPrivateProfile() || likePost.getUser().equals(user) || checkFollowing(user, likePost.getUser())) {
         return ResponseEntity.ok(maybeLikePost.get());
+
       } else {
         return handleBadCredentials(authentication.getName());
       }
@@ -85,7 +87,10 @@ public class LikePostController extends Controller {
         if (post.getLikes().stream().map(LikePost::getUser).noneMatch(n -> n.equals(user))) {
           LikePost likePost = new LikePost(user, post);
           likePostRepository.save(likePost);
-          return handleSuccess(String.valueOf((post.getLikes().size() + 1)));
+
+          // return the updated post
+          post.addLike(likePost);
+          return ResponseEntity.ok(post);
 
         } else {
           return handleBadRequest("Like: " + id.toString());
@@ -115,7 +120,10 @@ public class LikePostController extends Controller {
       if (maybeLike.isPresent()) {
         LikePost like = maybeLike.get();
         likePostRepository.delete(like);
-        return handleSuccess("Deleted like successfully");
+
+        // return the updated post
+        return ResponseEntity.ok(postRepository.findById(id).get());
+
       } else {
         return handleNotFound(id.toString());
       }

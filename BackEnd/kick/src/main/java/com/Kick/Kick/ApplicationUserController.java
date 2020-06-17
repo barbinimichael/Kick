@@ -129,15 +129,14 @@ public class ApplicationUserController extends Controller {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
 
     if (username.equals(user.getUsername())) {
-      return handleSuccess("Saved username");
+      return ResponseEntity.ok(user);
 
     } else if (applicationUserRepository.findByUsername(username).isPresent()) {
       return handleUsernameConflict(username);
 
     } else {
       user.setUsername(username);
-      applicationUserRepository.save(user);
-      return handleSuccess("Saved username");
+      return ResponseEntity.ok(applicationUserRepository.save(user));
     }
   }
 
@@ -146,8 +145,7 @@ public class ApplicationUserController extends Controller {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     applicationUserRepository.delete(user);
     user.setPassword(bCryptPasswordEncoder.encode(password));
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved password");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @PutMapping("/api/applicationUsers/email")
@@ -155,15 +153,14 @@ public class ApplicationUserController extends Controller {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
 
     if (email.equals(user.getEmail())) {
-      return handleSuccess("Saved email");
+      return ResponseEntity.ok(user);
 
     } else if (applicationUserRepository.findByEmail(email).isPresent()) {
       return handleEmailConflict(email);
 
     } else {
       user.setEmail(email);
-      applicationUserRepository.save(user);
-      return handleSuccess("Saved email");
+      return ResponseEntity.ok(applicationUserRepository.save(user));
     }
   }
 
@@ -171,32 +168,28 @@ public class ApplicationUserController extends Controller {
   public ResponseEntity changeApplicationUserCity(Authentication authentication, @RequestBody String city) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     user.setCity(city);
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved city");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @PutMapping("/api/applicationUsers/country")
   public ResponseEntity changeApplicationUserCountry(Authentication authentication, @RequestBody String country) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     user.setCountry(country);
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved country");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @PutMapping("/api/applicationUsers/biography")
   public ResponseEntity changeApplicationUserBiography(Authentication authentication, @RequestBody String biography) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     user.setBiography(biography);
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved biography");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @PutMapping("/api/applicationUsers/profilePictureURL")
   public ResponseEntity changeApplicationUserProfilePictureURL(Authentication authentication, @RequestBody String profilePictureURL) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     user.setProfilePictureURL(profilePictureURL);
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved profilePictureURL");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @PutMapping("/api/applicationUsers/privateProfile")
@@ -204,8 +197,7 @@ public class ApplicationUserController extends Controller {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     boolean value = Boolean.parseBoolean(privateProfile);
     user.setPrivateProfile(value);
-    applicationUserRepository.save(user);
-    return handleSuccess("Saved privateProfile");
+    return ResponseEntity.ok(applicationUserRepository.save(user));
   }
 
   @DeleteMapping("/api/applicationUsers")

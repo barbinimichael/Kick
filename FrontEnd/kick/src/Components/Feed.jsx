@@ -13,6 +13,9 @@ class Feed extends Component {
             id={post.id}
             post={post}
             liked={this.props.liked[index]}
+            handleUserCommented={this.props.handleUserCommented}
+            handleUserLiked={this.props.handleUserLiked}
+            handleUserUnLiked={this.props.handleUserUnLiked}
           ></Post>
         ))}
       </div>

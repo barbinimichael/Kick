@@ -16,15 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @RestController
 public class PostController extends Controller {
@@ -90,8 +82,7 @@ public class PostController extends Controller {
   public ResponseEntity newPost(Authentication authentication, @RequestBody Post newPost) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     newPost.setUser(user);
-    postRepository.save(newPost);
-    return handleSuccess("Saved post");
+    return(ResponseEntity.ok(postRepository.save(newPost)));
   }
 
   @PutMapping("/api/posts")
@@ -109,8 +100,7 @@ public class PostController extends Controller {
         post.setImageURL(newPost.getImageURL());
         post.setCity(newPost.getCity());
         post.setCountry(newPost.getCountry());
-        postRepository.save(post);
-        return handleSuccess("Edited Post");
+        return(ResponseEntity.ok(postRepository.save(post)));
 
       } else {
         return handleBadCredentials(user.getUsername());
