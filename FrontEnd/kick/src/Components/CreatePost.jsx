@@ -1,8 +1,16 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import Image from "react-bootstrap/Image";
 
 class CreatePost extends Component {
-  state = {};
+  state = { image: "" };
+
+  handleFileSubmit = (event) => {
+    event.preventDefault();
+    console.log("files", event.target.files);
+    this.setState({ image: URL.createObjectURL(event.target.files[0]) });
+  };
+
   render() {
     return (
       <div>
@@ -11,24 +19,51 @@ class CreatePost extends Component {
             <Col lg="3"></Col>
             <Col lg="6">
               <Form>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email" />
-                  <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                  </Form.Text>
-                </Form.Group>
-
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" placeholder="Password" />
-                </Form.Group>
-                <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check type="checkbox" label="Check me out" />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
+                <Col>
+                  <Row xs="6" md="3" lg="1">
+                    <Form.Group controlId="formImage">
+                      <Image src={this.state.image} roundedCircle fluid />
+                    </Form.Group>
+                  </Row>
+                  <Row>
+                    <Form.Group controlId="formFile">
+                      <Form.File
+                        id="formFileImageUpload"
+                        label="Upload a local image"
+                        onChange={this.handleFileSubmit}
+                        type="file"
+                        accept=".jpg, .png, .jpeg"
+                      />
+                    </Form.Group>
+                  </Row>
+                  <Row>
+                    <Form.Group controlId="formCaption">
+                      <Form.Label>Caption</Form.Label>
+                      <Form.Control
+                        type="caption"
+                        placeholder="Enter a caption"
+                      />
+                    </Form.Group>
+                  </Row>
+                  <Row>
+                    <Form.Group controlId="formLocation">
+                      <Form.Label>Location</Form.Label>
+                      <Row>
+                        <Col>
+                          <Form.Control placeholder="City" />
+                        </Col>
+                        <Col>
+                          <Form.Control placeholder="Country" />
+                        </Col>
+                      </Row>
+                    </Form.Group>
+                  </Row>
+                  <Row>
+                    <Button variant="primary" type="submit">
+                      Post
+                    </Button>
+                  </Row>
+                </Col>
               </Form>
             </Col>
             <Col lg="3"></Col>
