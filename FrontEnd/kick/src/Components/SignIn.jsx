@@ -6,10 +6,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Nav from "react-bootstrap/Nav";
 import history from "./History";
-import logo from "../logo.svg";
 import API from "../api/api";
-
-import { useLocation } from "react-router-dom";
 
 class SignIn extends Component {
   state = { username: "", password: "", failed: false, login: false };

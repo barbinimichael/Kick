@@ -61,8 +61,8 @@ class Post extends Component {
             <img src={chat} alt="" />
           </Button>
           <Card.Title>{this.props.post.likes.length} likes</Card.Title>
-          {this.setComments().map((comment) => (
-            <Card.Text>{comment}</Card.Text>
+          {this.setComments().map((comment, index) => (
+            <Card.Text key={index}>{comment}</Card.Text>
           ))}
           <Card.Text>{this.props.post.caption}</Card.Text>
           <Card.Subtitle className="mb-2 text-muted">

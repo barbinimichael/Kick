@@ -39,13 +39,13 @@ public class PostController extends Controller {
     logger.info("logged in: " + authentication.getName());
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     ArrayList<ApplicationUser> users = new ArrayList<>();
+    users.add(user); // should be in own feed
     for (Following following : user.getWhereIsFollower()) {
       if (following.isAccepted()) {
-        logger.info("Influencer: " + following.getInfluencer().getUsername());
         users.add(following.getInfluencer());
       }
     }
-    Page<Post> feed = postRepository.findByUserIn(users, pageable);
+    Page<Post> feed = postRepository.findByUserInOrderByTimeAsc(users, pageable);
     return ResponseEntity.ok(feed);
   }
 

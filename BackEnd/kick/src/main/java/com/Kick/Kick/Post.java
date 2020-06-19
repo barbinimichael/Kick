@@ -45,6 +45,7 @@ public class Post {
   private String city;
   private String country;
   private Instant postDate;
+  private long time;
 
   public Post() {
   }
@@ -109,6 +110,7 @@ public class Post {
     this.city = city;
     this.country = country;
     this.postDate = postDate;
+    this.time = postDate.toEpochMilli();
 
     this.likes = likes;
     this.comments = comments;
@@ -206,6 +208,14 @@ public class Post {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public long getTime() {
+    return time;
+  }
+
+  public void setTime(long time) {
+    this.time = time;
   }
 
   @Override
