@@ -5,17 +5,32 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import NavigationBar from "./Components/NavigationBar";
-import CreatePost from "./Components/CreatePost";
-import Home from "./Components/Home";
-import SignIn from "./Components/SignIn";
+import CreatePost from "./Pages/CreatePost";
+import Home from "./Pages/Home";
+import SignIn from "./Pages/SignIn";
 import PrivateRoute from "./Components/PrivateRoute";
-import Registration from "./Components/Registration";
-import Explore from "./Components/Explore";
-import Message from "./Components/Message";
+import Registration from "./Pages/Registration";
+import Explore from "./Pages/Explore";
+import Message from "./Pages/Message";
+import Search from "./Pages/Search";
 
 import NoMatch from "./Components/NoMatch";
+import API from "./api/api";
 
 class App extends Component {
+  componentDidMount() {
+    API({
+      method: "get",
+      url: "api/applicationUsers/self",
+    })
+      .then((response) => {
+        this.setState({ user: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   render() {
     return (
       <Router>
@@ -25,6 +40,7 @@ class App extends Component {
           <PrivateRoute path="/create-post" exact component={CreatePost} />
           <PrivateRoute path="/message" exact component={Message} />
           <PrivateRoute path="/explore" exact component={Explore} />
+          <PrivateRoute path="/search" exact component={Search} />
           <Route path="/sign-in" exact component={SignIn} />
           <Route path="/register" exact component={Registration} />
           <Route component={NoMatch} />

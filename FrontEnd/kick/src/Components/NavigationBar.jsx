@@ -34,6 +34,9 @@ class NavigationBar extends Component {
             <Nav.Link href="explore">Explore</Nav.Link>
           </Nav>
           <Nav>
+            <Nav.Link href="search">Search</Nav.Link>
+          </Nav>
+          <Nav>
             <Nav.Link href="create-post">Create Post</Nav.Link>
           </Nav>
           <Nav className="ml-auto">

@@ -5,7 +5,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Nav from "react-bootstrap/Nav";
-import history from "./History";
+import history from "../Components/History";
 import API from "../api/api";
 
 class SignIn extends Component {

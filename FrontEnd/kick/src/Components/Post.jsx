@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import API from "../api/api";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
