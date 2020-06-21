@@ -13,6 +13,7 @@ import Registration from "./Pages/Registration";
 import Explore from "./Pages/Explore";
 import Message from "./Pages/Message";
 import Search from "./Pages/Search";
+import UserPage from "./Pages/UserPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
@@ -41,6 +42,7 @@ class App extends Component {
           <PrivateRoute path="/message" exact component={Message} />
           <PrivateRoute path="/explore" exact component={Explore} />
           <PrivateRoute path="/search" exact component={Search} />
+          <PrivateRoute path="/user/:username" component={UserPage} />
           <Route path="/sign-in" exact component={SignIn} />
           <Route path="/register" exact component={Registration} />
           <Route component={NoMatch} />

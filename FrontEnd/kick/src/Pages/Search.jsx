@@ -5,6 +5,7 @@ import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 
 import Feed from "../Components/Feed";
+import UserFeed from "../Components/UserFeed";
 
 class Search extends Component {
   state = {
@@ -76,7 +77,9 @@ class Search extends Component {
               )}
               {(this.state.search !== "") &
               (this.state.selectedOption === "userToggle") ? (
-                <h1>/api/posts/search?search=${this.state.search}</h1>
+                <UserFeed
+                  feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*`}
+                />
               ) : (
                 <React.Fragment></React.Fragment>
               )}

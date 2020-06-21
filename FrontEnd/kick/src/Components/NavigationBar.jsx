@@ -28,16 +28,16 @@ class NavigationBar extends Component {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav>
-            <Nav.Link href="message">Message</Nav.Link>
+            <Nav.Link href="/message">Message</Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link href="explore">Explore</Nav.Link>
+            <Nav.Link href="/explore">Explore</Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link href="search">Search</Nav.Link>
+            <Nav.Link href="/search">Search</Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link href="create-post">Create Post</Nav.Link>
+            <Nav.Link href="/create-post">Create Post</Nav.Link>
           </Nav>
           <Nav className="ml-auto">
             <Button onClick={this.handleSignOut}>Sign Out</Button>
