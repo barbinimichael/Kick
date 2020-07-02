@@ -20,14 +20,16 @@ public class FollowingController extends Controller {
 
   private final ApplicationUserRepository applicationUserRepository;
   private final FollowingRepository followingRepository;
+  private final FollowingNotificationRepository followingNotificationRepository;
 
   private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public FollowingController(ApplicationUserRepository applicationUserRepository,
-                             FollowingRepository followingRepository) {
+                             FollowingRepository followingRepository, FollowingNotificationRepository followingNotificationRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.followingRepository = followingRepository;
+    this.followingNotificationRepository = followingNotificationRepository;
   }
 
   @GetMapping("/api/followings/{id}")
@@ -59,7 +61,11 @@ public class FollowingController extends Controller {
 
       if (!influencer.isPrivateProfile()) {
         newFollowing.setAccepted(true);
+
+      } else {
+        followingNotificationRepository.save(new FollowingNotification(influencer, newFollowing.getId()));
       }
+      
       return ResponseEntity.ok(followingRepository.save(newFollowing));
 
     } else {

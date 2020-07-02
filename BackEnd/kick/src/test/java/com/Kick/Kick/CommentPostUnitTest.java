@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.Kick.Kick.MockAuthentication;
 import java.time.Instant;
 import java.util.HashSet;
 
@@ -99,6 +98,7 @@ public class CommentPostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pTwo = new Post("Hi again",
@@ -106,6 +106,7 @@ public class CommentPostUnitTest {
         "Hawaii",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 
@@ -115,6 +116,7 @@ public class CommentPostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFour = new Post("Boston wack",
@@ -123,6 +125,7 @@ public class CommentPostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFive = new Post("Yawn",
@@ -130,6 +133,7 @@ public class CommentPostUnitTest {
         "Boston",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 

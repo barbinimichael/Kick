@@ -106,6 +106,16 @@ public class ApplicationUser {
   @JsonManagedReference
   private Set<CommentPost> comments;
 
+  @OneToMany(mappedBy = "postOwner",
+      orphanRemoval = true)
+  @JsonManagedReference
+  private Set<LikeNotification> likeNotifications;
+
+  @OneToMany(mappedBy = "influencer",
+      orphanRemoval = true)
+  @JsonManagedReference
+  private Set<FollowingNotification> followingNotifications;
+
   private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   public ApplicationUser() {
@@ -396,6 +406,30 @@ public class ApplicationUser {
 
   public void addComment(CommentPost comment) {
     this.comments.add(comment);
+  }
+
+  public Set<LikeNotification> getLikeNotifications() {
+    return likeNotifications;
+  }
+
+  public void setLikeNotifications(Set<LikeNotification> likeNotifications) {
+    this.likeNotifications = likeNotifications;
+  }
+
+  public void addLikeNotification(LikeNotification likeNotification) {
+    this.likeNotifications.add(likeNotification);
+  }
+
+  public Set<FollowingNotification> getFollowingNotifications() {
+    return followingNotifications;
+  }
+
+  public void setFollowingNotifications(Set<FollowingNotification> followingNotifications) {
+    this.followingNotifications = followingNotifications;
+  }
+
+  public void addFollowingNotification(FollowingNotification followingNotification) {
+    this.followingNotifications.add(followingNotification);
   }
 
   public ApplicationUser generatePrivateUser() {

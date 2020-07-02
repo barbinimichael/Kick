@@ -76,6 +76,7 @@ class KickApplicationTests {
 			"USA",
 			Instant.now(),
 			new HashSet<>(),
+			new HashSet<>(),
 			new HashSet<>());
 
 	private final Post pTwo = new Post("Hi again",
@@ -83,6 +84,7 @@ class KickApplicationTests {
 			"Boston",
 			"USA",
 			Instant.now(),
+			new HashSet<>(),
 			new HashSet<>(),
 			new HashSet<>());
 

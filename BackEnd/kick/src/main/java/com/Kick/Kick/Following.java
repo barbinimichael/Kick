@@ -40,10 +40,6 @@ public class Following {
     this.influencer = influencer;
     this.follower = follower;
     this.accepted = false;
-
-    logger.info("in following");
-    logger.info(influencer.getUsername());
-    logger.info(follower.getUsername());
   }
 
   public Long getId() {

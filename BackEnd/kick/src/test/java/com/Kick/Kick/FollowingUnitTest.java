@@ -94,6 +94,7 @@ public class FollowingUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pTwo = new Post("Hi again",
@@ -101,6 +102,7 @@ public class FollowingUnitTest {
         "Hawaii",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 
@@ -110,6 +112,7 @@ public class FollowingUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFour = new Post("Boston wack",
@@ -118,6 +121,7 @@ public class FollowingUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFive = new Post("Yawn",
@@ -125,6 +129,7 @@ public class FollowingUnitTest {
         "Boston",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 

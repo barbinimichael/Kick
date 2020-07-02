@@ -28,16 +28,18 @@ public class DatabaseLoader implements CommandLineRunner {
   private final ApplicationUserController applicationUserController;
   private final FollowingController followingController;
   private final PostController postController;
+  private final LikePostController likePostController;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   private ArrayList<ApplicationUser> users = new ArrayList<>();
   private ApplicationUser m;
+  private Post pThree;
 
   @Autowired
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,
                         PostRepository postRepository,
                         FollowingRepository followingRepository,
-                        LikePostRepository likePostRepository, CommentPostRepository commentPostRepository, ApplicationUserController applicationUserController, FollowingController followingController, PostController postController, BCryptPasswordEncoder bCryptPasswordEncoder) {
+                        LikePostRepository likePostRepository, CommentPostRepository commentPostRepository, ApplicationUserController applicationUserController, FollowingController followingController, PostController postController, LikePostController likePostController, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
     this.followingRepository = followingRepository;
@@ -46,6 +48,7 @@ public class DatabaseLoader implements CommandLineRunner {
     this.applicationUserController = applicationUserController;
     this.followingController = followingController;
     this.postController = postController;
+    this.likePostController = likePostController;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
@@ -63,7 +66,7 @@ public class DatabaseLoader implements CommandLineRunner {
         "USA",
         Gender.MALE,
         "Hi", "https://imgur.com/a/qKEjLCD",
-        true);
+        false);
 
     ApplicationUser mTwo = new ApplicationUser("mikey",
         "secure password",
@@ -83,6 +86,7 @@ public class DatabaseLoader implements CommandLineRunner {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     Post pTwo = new Post("Hi again",
@@ -90,6 +94,16 @@ public class DatabaseLoader implements CommandLineRunner {
         "Boston",
         "USA",
         Instant.now(),
+        new HashSet<>(),
+        new HashSet<>(),
+        new HashSet<>());
+
+    pThree = new Post("mbarbzzz first Post",
+        "www.link.le",
+        "Boston",
+        "USA",
+        Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 
@@ -101,6 +115,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
     postController.newPost(new MockAuthentication(mTwo), p);
     postController.newPost(new MockAuthentication(mTwo), pTwo);
+    postController.newPost(new MockAuthentication(m), pThree);
 
     users.add(m);
 
@@ -138,6 +153,12 @@ public class DatabaseLoader implements CommandLineRunner {
     followingController.follow(new MockAuthentication(m), newUser.getUsername());
     followingController.acceptFollower(new MockAuthentication(newUser),
         followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), newUser.getUsername()).get().getId(), true);
+
+    followingController.follow(new MockAuthentication(newUser), m.getUsername());
+    followingController.acceptFollower(new MockAuthentication(m),
+        followingRepository.findByFollowerUsernameAndInfluencerUsername(newUser.getUsername(), m.getUsername()).get().getId(), true);
+
+    likePostController.like(new MockAuthentication(newUser), pThree.getId());
 
     users.add(newUser);
   }

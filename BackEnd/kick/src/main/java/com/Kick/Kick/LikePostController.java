@@ -20,15 +20,17 @@ public class LikePostController extends Controller {
   private final ApplicationUserRepository applicationUserRepository;
   private final LikePostRepository likePostRepository;
   private final PostRepository postRepository;
+  private final LikeNotificationRepository likeNotificationRepository;
 
   private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public LikePostController(ApplicationUserRepository applicationUserRepository,
-                            LikePostRepository likePostRepository, PostRepository postRepository) {
+                            LikePostRepository likePostRepository, PostRepository postRepository, LikeNotificationRepository likeNotificationRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.likePostRepository = likePostRepository;
     this.postRepository = postRepository;
+    this.likeNotificationRepository = likeNotificationRepository;
   }
 
   @GetMapping("/api/posts/{id}/liked")
@@ -87,6 +89,11 @@ public class LikePostController extends Controller {
         if (post.getLikes().stream().map(LikePost::getUser).noneMatch(n -> n.equals(user))) {
           LikePost likePost = new LikePost(user, post);
           likePostRepository.save(likePost);
+
+          // create a like notification
+          LikeNotification likeNotification =
+              new LikeNotification(post.getUser(), post, user.getUsername());
+          likeNotificationRepository.save(likeNotification);
 
           // return the updated post
           post.addLike(likePost);

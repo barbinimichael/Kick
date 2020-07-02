@@ -39,6 +39,11 @@ public class Post {
   @JsonManagedReference(value = "post-comment_post")
   private Set<CommentPost> comments;
 
+  @OneToMany(mappedBy = "post",
+      orphanRemoval = true)
+  @JsonManagedReference(value = "post-like_notification")
+  private Set<LikeNotification> likeNotifications;
+
   private String username;
   private String caption;
   private String imageURL;
@@ -77,6 +82,7 @@ public class Post {
             postDate).atStartOfDay(ZoneId.of("UTC")).toInstant(),
         new HashSet<>(),
         new HashSet<>(),
+        new HashSet<>(),
         user);
   }
 
@@ -86,7 +92,8 @@ public class Post {
               String country,
               Instant postDate,
               Set<LikePost> likes,
-              Set<CommentPost> comments) {
+              Set<CommentPost> comments,
+              Set<LikeNotification> likeNotifications) {
     this(caption,
         imageURL,
         city,
@@ -94,6 +101,7 @@ public class Post {
         postDate,
         likes,
         comments,
+        likeNotifications,
         null);
   }
 
@@ -104,6 +112,7 @@ public class Post {
               Instant postDate,
               Set<LikePost> likes,
               Set<CommentPost> comments,
+              Set<LikeNotification> likeNotifications,
               ApplicationUser user) {
     this.caption = caption;
     this.imageURL = imageURL;
@@ -116,6 +125,7 @@ public class Post {
     this.comments = comments;
 
     this.user = user;
+    this.likeNotifications = likeNotifications;
     if (user != null) {
       this.username = user.getUsername();
     }
@@ -216,6 +226,18 @@ public class Post {
 
   public void setTime(long time) {
     this.time = time;
+  }
+
+  public Set<LikeNotification> getLikeNotifications() {
+    return likeNotifications;
+  }
+
+  public void setLikeNotifications(Set<LikeNotification> likeNotifications) {
+    this.likeNotifications = likeNotifications;
+  }
+
+  public void addLikeNotification(LikeNotification likeNotification) {
+    this.likeNotifications.add(likeNotification);
   }
 
   @Override

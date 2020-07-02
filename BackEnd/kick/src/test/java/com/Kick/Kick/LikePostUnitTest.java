@@ -1,17 +1,5 @@
 package com.Kick.Kick;
 
-import com.Kick.Kick.ApplicationUser;
-import com.Kick.Kick.ApplicationUserRepository;
-import com.Kick.Kick.Following;
-import com.Kick.Kick.FollowingController;
-import com.Kick.Kick.FollowingRepository;
-import com.Kick.Kick.LikePost;
-import com.Kick.Kick.LikePostController;
-import com.Kick.Kick.LikePostRepository;
-import com.Kick.Kick.Post;
-import com.Kick.Kick.PostController;
-import com.Kick.Kick.PostRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -109,6 +97,7 @@ public class LikePostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pTwo = new Post("Hi again",
@@ -116,6 +105,7 @@ public class LikePostUnitTest {
         "Hawaii",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 
@@ -125,6 +115,7 @@ public class LikePostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFour = new Post("Boston wack",
@@ -133,6 +124,7 @@ public class LikePostUnitTest {
         "USA",
         Instant.now(),
         new HashSet<>(),
+        new HashSet<>(),
         new HashSet<>());
 
     pFive = new Post("Yawn",
@@ -140,6 +132,7 @@ public class LikePostUnitTest {
         "Boston",
         "USA",
         Instant.now(),
+        new HashSet<>(),
         new HashSet<>(),
         new HashSet<>());
 
