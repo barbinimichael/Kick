@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
     Page<Post> findByUserInOrderByTimeAsc(List<ApplicationUser> userList, Pageable pageable);
+    Page<Post> findByUserOrderByTimeAsc(ApplicationUser user, Pageable pageable);
     Page<Post> findByUserPrivateProfileAndCaptionContaining(boolean privateProfile, String caption, Pageable pageable);
     Page<Post> findByUserPrivateProfileAndCityLike(boolean privateProfile, String city, Pageable pageable);
     Page<Post> findByUserPrivateProfileAndCountryLike(boolean privateProfile, String country, Pageable pageable);

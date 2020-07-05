@@ -3,7 +3,7 @@ import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  state = { feed: [], liked: [], update: false };
+  state = { feed: [], liked: [], update: false, privateProfile: false };
 
   componentDidMount() {
     this.createFeed();
@@ -21,8 +21,15 @@ class Feed extends Component {
       url: this.props.feedURL,
     })
       .then((response) => {
+        console.log("Feed response", response);
+
         let feed = response.data.content;
         this.setState({ feed });
+
+        if (response.data === "Not following or public") {
+          this.setState({ noPost: true });
+        }
+
         return feed;
       })
       .then((feed) => {
@@ -35,6 +42,7 @@ class Feed extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.setState({ update: false });
       });
   };
 
@@ -105,17 +113,23 @@ class Feed extends Component {
     }
     return (
       <div>
-        {this.state.feed.map((post, index) => (
-          <Post
-            key={post.id}
-            id={post.id}
-            post={post}
-            liked={this.state.liked[index]}
-            handleUserCommented={this.handleUserCommented}
-            handleUserLiked={this.handleUserLiked}
-            handleUserUnLiked={this.handleUserUnLiked}
-          ></Post>
-        ))}
+        {this.state.feed ? (
+          this.state.feed.map((post, index) => (
+            <Post
+              key={post.id}
+              id={post.id}
+              post={post}
+              liked={this.state.liked[index]}
+              handleUserCommented={this.handleUserCommented}
+              handleUserLiked={this.handleUserLiked}
+              handleUserUnLiked={this.handleUserUnLiked}
+            ></Post>
+          ))
+        ) : this.state.privateProfile ? (
+          <h1>No posts</h1>
+        ) : (
+          <h1>Private profile</h1>
+        )}
       </div>
     );
   }

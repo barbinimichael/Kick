@@ -47,14 +47,14 @@ public class ApplicationUserController extends Controller {
       builder.with(
           matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
     }
-    SearchCriteria publicProfile = new SearchCriteria(
-        "privateProfile",
-        SearchOperation.getSimpleOperation(':'),
-        false);
-    builder.with(publicProfile);
+    //    SearchCriteria publicProfile = new SearchCriteria(
+    //        "privateProfile",
+    //        SearchOperation.getSimpleOperation(':'),
+    //        false);
+    //    builder.with(publicProfile);
     Specification<ApplicationUser> spec = builder.build();
     Page<ApplicationUser> preliminary = applicationUserRepository.findAll(spec, pageable);
-    return ResponseEntity.ok(preliminary.map(ApplicationUser::generatePublicUser));
+    return ResponseEntity.ok(preliminary.map(ApplicationUser::generatePrivateUser));
   }
 
   @PostMapping(SIGN_UP_URL)

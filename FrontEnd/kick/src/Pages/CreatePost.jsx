@@ -37,6 +37,7 @@ class CreatePost extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.props.handleLogout();
       });
   };
 

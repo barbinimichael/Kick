@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,17 +25,40 @@ public class PostController extends Controller {
 
   private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-  private PostRepository postRepository;
-  private ApplicationUserRepository applicationUserRepository;
+  private final PostRepository postRepository;
+  private final ApplicationUserRepository applicationUserRepository;
+  private final FollowingRepository followingRepository;
 
   @Autowired
   public PostController(ApplicationUserRepository applicationUserRepository,
-                        PostRepository postRepository) {
+                        PostRepository postRepository, FollowingRepository followingRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
+    this.followingRepository = followingRepository;
   }
 
-  // page, size, sort
+  @GetMapping("/api/posts/user/{username}")
+  public ResponseEntity getPosts(Authentication authentication, Pageable pageable, @PathVariable @NonNull String username ) {
+    ApplicationUser thisUser = applicationUserRepository.findByUsername(authentication.getName()).get();
+    Optional<ApplicationUser> maybeUser = applicationUserRepository.findByUsername(username);
+
+    if (maybeUser.isPresent()) {
+      ApplicationUser user = maybeUser.get();
+      Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(thisUser.getUsername(), user.getUsername());
+
+      if (thisUser.equals(user) || !user.isPrivateProfile() || (maybeFollowing.isPresent() && maybeFollowing.get().isAccepted())) {
+        return ResponseEntity.ok(postRepository.findByUserOrderByTimeAsc(user, pageable));
+
+      } else {
+        return ResponseEntity.ok("Not following or public");
+      }
+
+    } else {
+      return handleNotFound(username);
+    }
+
+  }
+
   @GetMapping("/api/posts/feed")
   public ResponseEntity getFeed(Authentication authentication, Pageable pageable) {
     logger.info("logged in: " + authentication.getName());

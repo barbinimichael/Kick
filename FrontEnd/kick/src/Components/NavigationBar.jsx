@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import logo from "../logo.svg";
 import { Navbar, Nav, Button } from "react-bootstrap";
 
+import personCircle from "bootstrap-icons/icons/person-circle.svg";
+
 import history from "./History";
 
 class NavigationBar extends Component {
@@ -39,7 +41,17 @@ class NavigationBar extends Component {
           <Nav>
             <Nav.Link href="/create-post">Create Post</Nav.Link>
           </Nav>
+
           <Nav className="ml-auto">
+            <Navbar.Brand href="/user/me">
+              <img
+                src={personCircle}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+                alt="React Bootstrap logo"
+              />
+            </Navbar.Brand>
             <Button onClick={this.handleSignOut}>Sign Out</Button>
           </Nav>
         </Navbar.Collapse>

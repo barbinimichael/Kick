@@ -59,14 +59,18 @@ public class FollowingController extends Controller {
       ApplicationUser influencer = maybeInfluencer.get();
       Following newFollowing = new Following(user, influencer);
 
+      Following savedFollowing;
+
       if (!influencer.isPrivateProfile()) {
         newFollowing.setAccepted(true);
+        savedFollowing = followingRepository.save(newFollowing);
 
       } else {
-        followingNotificationRepository.save(new FollowingNotification(influencer, newFollowing.getId()));
+        savedFollowing = followingRepository.save(newFollowing);
+        followingNotificationRepository.save(new FollowingNotification(influencer, savedFollowing.getId()));
       }
       
-      return ResponseEntity.ok(followingRepository.save(newFollowing));
+      return ResponseEntity.ok(savedFollowing);
 
     } else {
       return handleNotFound(username);

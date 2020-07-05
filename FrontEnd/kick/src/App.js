@@ -17,9 +17,16 @@ import UserPage from "./Pages/UserPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
+import history from "./Components/History";
 
 class App extends Component {
+  state = { user: [] };
+
   componentDidMount() {
+    this.getSelfInformation();
+  }
+
+  getSelfInformation = () => {
     API({
       method: "get",
       url: "api/applicationUsers/self",
@@ -29,8 +36,20 @@ class App extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.handleLogout();
       });
-  }
+  };
+
+  handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("Authorization");
+    history.push("/sign-in");
+
+    if (localStorage["checkedLogin"] === "") {
+      localStorage.setItem("checkedLogin", true);
+      document.location.reload(true);
+    }
+  };
 
   render() {
     return (
@@ -42,7 +61,11 @@ class App extends Component {
           <PrivateRoute path="/message" exact component={Message} />
           <PrivateRoute path="/explore" exact component={Explore} />
           <PrivateRoute path="/search" exact component={Search} />
-          <PrivateRoute path="/user/:username" component={UserPage} />
+          <PrivateRoute
+            path="/user/:username"
+            component={UserPage}
+            meUser={this.state.user}
+          />
           <Route path="/sign-in" exact component={SignIn} />
           <Route path="/register" exact component={Registration} />
           <Route component={NoMatch} />
