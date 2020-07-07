@@ -1,12 +1,55 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
+import { Container, Row, Col } from "react-bootstrap";
 import Jumbotron from "react-bootstrap/Jumbotron";
 import Image from "react-bootstrap/Image";
 import Badge from "react-bootstrap/Badge";
 import logo from "../logo.svg";
-import { Link } from "react-router-dom";
+
+import API from "../api/api";
 
 class UserCard extends Component {
+  state = { update: false, following: false };
+
+  componentDidUpdate(props) {
+    if (this.props !== props) {
+      this.setState({ update: true });
+    }
+  }
+
+  componentDidMount() {
+    this.checkFollowing();
+  }
+
+  checkFollowing = () => {
+    API({
+      method: "get",
+      url: `/api/followings/check/${this.props.user.username}`,
+    })
+      .then((response) => {
+        console.log("Following", response);
+        this.setState({ following: response.data });
+        this.setState({ update: false });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
+    if (this.state.update) {
+      this.checkFollowing();
+    }
+
+    let followerWord = "Followers";
+    if (
+      this.props.user.whereIsInfluencer &&
+      this.props.user.whereIsInfluencer.length === 1
+    ) {
+      followerWord = "Follower";
+    }
+
     return (
       <Jumbotron>
         <Image
@@ -28,9 +71,40 @@ class UserCard extends Component {
           </Badge>
         ) : (
           <Badge pill variant="success">
-            Private
+            Public
           </Badge>
         )}
+        {this.state.following ? (
+          <Badge pill variant="info">
+            Following
+          </Badge>
+        ) : (
+          <Badge pill variant="danger">
+            Not Following
+          </Badge>
+        )}
+        <Container>
+          <Row>
+            <Col align="right">
+              {this.props.user.whereIsInfluencer ? (
+                <Link to={`/followers/${this.props.user.username}`}>
+                  {this.props.user.whereIsInfluencer.length} {followerWord}
+                </Link>
+              ) : (
+                "0 Followers"
+              )}
+            </Col>
+            <Col align="left">
+              {this.props.user.whereIsInfluencer ? (
+                <Link to={`/influencers/${this.props.user.username}`}>
+                  {this.props.user.whereIsInfluencer.length} Following
+                </Link>
+              ) : (
+                "0 Following"
+              )}
+            </Col>
+          </Row>
+        </Container>
         <hr className="hr-line" />
         <p className="less-margin">
           <b>

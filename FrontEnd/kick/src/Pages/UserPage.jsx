@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
+import Page from "../Components/Page";
 import UserCard from "../Components/UserCard";
 import Feed from "../Components/Feed";
 
@@ -28,33 +29,29 @@ class UserPage extends Component {
 
   render() {
     return (
-      <div>
-        <Container fluid>
-          <Row>
-            <Col lg="3"></Col>
-            <Col lg="6">
-              {this.props.match.params.username === "me" ? (
-                <React.Fragment>
-                  <UserCard user={this.props.meUser} />
-                  <Feed
-                    feedURL={"/api/posts/user/" + this.props.meUser.username}
-                  />
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <UserCard user={this.state.user} />
-                  <Feed
-                    feedURL={
-                      "/api/posts/user/" + this.props.match.params.username
-                    }
-                  />
-                </React.Fragment>
-              )}
-            </Col>
-            <Col lg="3"></Col>
-          </Row>
-        </Container>
-      </div>
+      <Page
+        middleComponent={
+          <React.Fragment>
+            {this.props.match.params.username === "me" ? (
+              <React.Fragment>
+                <UserCard user={this.props.meUser} />
+                <Feed
+                  feedURL={"/api/posts/user/" + this.props.meUser.username}
+                />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <UserCard user={this.state.user} />
+                <Feed
+                  feedURL={
+                    "/api/posts/user/" + this.props.match.params.username
+                  }
+                />
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        }
+      />
     );
   }
 }

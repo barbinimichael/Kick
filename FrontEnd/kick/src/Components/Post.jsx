@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
@@ -46,7 +48,11 @@ class Post extends Component {
   render() {
     return (
       <Card>
-        <Card.Header>{this.props.post.username}</Card.Header>
+        <Card.Header>
+          <Link to={`/user/${this.props.post.username}`}>
+            {this.props.post.username}
+          </Link>
+        </Card.Header>
         <Card.Img variant="top" src={logo} />
         <Card.Body>
           <Button variant="link" onClick={this.onLike}>

@@ -3,7 +3,9 @@ package com.Kick.Kick;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
@@ -50,8 +53,99 @@ public class FollowingController extends Controller {
     }
   }
 
+  @GetMapping("/api/followings/check/{username}")
+  public ResponseEntity isFollowing(Authentication authentication, @PathVariable @NonNull String username) {
+    if (authentication.getName().equals(username)) {
+      return ResponseEntity.ok(true);
+    }
+
+    Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
+
+    if (maybeInfluencer.isPresent()) {
+      ApplicationUser influencer = maybeInfluencer.get();
+      ApplicationUser follower = applicationUserRepository.findByUsername(authentication.getName()).get();
+
+      Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(follower.getUsername(), influencer.getUsername());
+
+      if (maybeFollowing.isPresent()) {
+        Following following = maybeFollowing.get();
+
+        if (following.isAccepted()) {
+          return ResponseEntity.ok(true);
+        }
+
+      }
+    }
+    return ResponseEntity.ok(false);
+  }
+
+  @GetMapping("/api/followings/followers/{username}")
+  public ResponseEntity getFollowers(Authentication authentication, @PathVariable @NonNull String username, Pageable pageable) {
+    ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+    if (authentication.getName().equals(username)) {
+      logger.info("Following controller same user");
+      return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(user.getUsername(), true, pageable)));
+    }
+
+    Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
+
+    if (maybeInfluencer.isPresent()) {
+      logger.info("Following controller influencer present");
+      ApplicationUser influencer = maybeInfluencer.get();
+
+      if (!influencer.isPrivateProfile()) {
+        logger.info("Following controller influencer was not private");
+        return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
+      }
+
+      Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(user.getUsername(), influencer.getUsername());
+
+      if (maybeFollowing.isPresent()) {
+        logger.info("Following controller following present");
+        Following following = maybeFollowing.get();
+
+        if (following.isAccepted()) {
+          logger.info("Following controller following accepted");
+          return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
+        }
+
+      }
+    }
+    return ResponseEntity.ok(new PageImpl<ApplicationUser>(new ArrayList<>(), pageable, 0));
+  }
+
+  @GetMapping("/api/followings/influencers/{username}")
+  public ResponseEntity getInfluencers(Authentication authentication, @PathVariable @NonNull String username, Pageable pageable) {
+    ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+    if (authentication.getName().equals(username)) {
+      return ResponseEntity.ok(this.getInfluencers(followingRepository.findAllByFollowerUsernameAndAccepted(user.getUsername(), true, pageable)));
+    }
+
+    Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
+
+    if (maybeInfluencer.isPresent()) {
+      ApplicationUser influencer = maybeInfluencer.get();
+
+      if (!influencer.isPrivateProfile()) {
+        return ResponseEntity.ok(this.getInfluencers(followingRepository.findAllByFollowerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
+      }
+
+      Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(user.getUsername(), influencer.getUsername());
+
+      if (maybeFollowing.isPresent()) {
+        Following following = maybeFollowing.get();
+
+        if (following.isAccepted()) {
+          return ResponseEntity.ok(this.getInfluencers(followingRepository.findAllByFollowerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
+        }
+
+      }
+    }
+    return ResponseEntity.ok(new PageImpl<ApplicationUser>(new ArrayList<>(), pageable, 0));
+  }
+
   @PostMapping("/api/followings")
-  public ResponseEntity follow(Authentication authentication, @Param("username") String username) {
+  public ResponseEntity follow(Authentication authentication, @PathVariable @NonNull String username) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
 
@@ -121,5 +215,13 @@ public class FollowingController extends Controller {
     } else {
       return handleNotFound(id.toString());
     }
+  }
+
+  private Page<ApplicationUser> getFollowers(Page<Following> followings) {
+    return followings.map(Following::getFollower);
+  }
+
+  private Page<ApplicationUser> getInfluencers(Page<Following> influencers) {
+    return influencers.map(Following::getInfluencer);
   }
 }

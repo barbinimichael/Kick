@@ -370,9 +370,6 @@ public class ApplicationUser {
   }
 
   public void addWhereIsFollower(Following follower) {
-    logger.info("In user: " + username);
-    logger.info("influencer " + follower.getInfluencer());
-    logger.info("follower " + follower.getFollower());
     this.whereIsFollower.add(follower);
   }
 

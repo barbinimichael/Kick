@@ -23,6 +23,7 @@ class UserFeed extends Component {
       url: this.props.feedURL,
     })
       .then((response) => {
+        console.log("User feed response", response);
         let feed = response.data.content;
         this.setState({ feed });
         this.setState({ update: false });

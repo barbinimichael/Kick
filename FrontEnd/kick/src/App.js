@@ -14,6 +14,8 @@ import Explore from "./Pages/Explore";
 import Message from "./Pages/Message";
 import Search from "./Pages/Search";
 import UserPage from "./Pages/UserPage";
+import FollowersPage from "./Pages/FollowersPage";
+import InfluencersPage from "./Pages/InfluencersPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
@@ -68,6 +70,16 @@ class App extends Component {
           />
           <Route path="/sign-in" exact component={SignIn} />
           <Route path="/register" exact component={Registration} />
+          <PrivateRoute
+            path="/followers/:username"
+            component={FollowersPage}
+            meUser={this.state.user}
+          />
+          <PrivateRoute
+            path="/influencers/:username"
+            component={InfluencersPage}
+            meUser={this.state.user}
+          />
           <Route component={NoMatch} />
         </Switch>
       </Router>
