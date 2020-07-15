@@ -15,7 +15,7 @@ class Home extends Component {
               <Feed feedURL="api/posts/feed" />
             </Col>
             <Col lg="3" className="Sidebar sticky-top">
-              <Dashboard />
+              <Dashboard meUser={this.props.meUser} />
             </Col>
           </Row>
         </Container>

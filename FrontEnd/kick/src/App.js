@@ -16,6 +16,7 @@ import Search from "./Pages/Search";
 import UserPage from "./Pages/UserPage";
 import FollowersPage from "./Pages/FollowersPage";
 import InfluencersPage from "./Pages/InfluencersPage";
+import PostPage from "./Pages/PostPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
@@ -58,7 +59,12 @@ class App extends Component {
       <Router>
         {localStorage["Authorization"] ? <NavigationBar /> : <div></div>}
         <Switch>
-          <PrivateRoute path="/" exact component={Home} />
+          <PrivateRoute
+            path="/"
+            exact
+            component={Home}
+            meUser={this.state.user}
+          />
           <PrivateRoute path="/create-post" exact component={CreatePost} />
           <PrivateRoute path="/message" exact component={Message} />
           <PrivateRoute path="/explore" exact component={Explore} />
@@ -80,6 +86,7 @@ class App extends Component {
             component={InfluencersPage}
             meUser={this.state.user}
           />
+          <PrivateRoute path="/post/:postId" component={PostPage} />
           <Route component={NoMatch} />
         </Switch>
       </Router>

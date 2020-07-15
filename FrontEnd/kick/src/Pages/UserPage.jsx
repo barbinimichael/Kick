@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Container, Row, Col } from "react-bootstrap";
 
 import Page from "../Components/Page";
 import UserCard from "../Components/UserCard";
