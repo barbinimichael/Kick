@@ -54,7 +54,7 @@ public class ApplicationUserController extends Controller {
     //    builder.with(publicProfile);
     Specification<ApplicationUser> spec = builder.build();
     Page<ApplicationUser> preliminary = applicationUserRepository.findAll(spec, pageable);
-    return ResponseEntity.ok(preliminary.map(ApplicationUser::generatePrivateUser));
+    return ResponseEntity.ok(preliminary.map(ApplicationUser::generatePubliclyVisibleUser));
   }
 
   @PostMapping(SIGN_UP_URL)
@@ -89,10 +89,10 @@ public class ApplicationUserController extends Controller {
         return ResponseEntity.ok(user);
 
       } else if (checkFollowing(user, searchUser)) {
-        return ResponseEntity.ok(searchUser.generatePublicUser());
+        return ResponseEntity.ok(searchUser.generateVisibleUser());
 
       } else {
-        return ResponseEntity.ok(searchUser.generatePrivateUser());
+        return ResponseEntity.ok(searchUser.generatePubliclyVisibleUser());
       }
 
     } else {
@@ -113,10 +113,10 @@ public class ApplicationUserController extends Controller {
         return ResponseEntity.ok(user);
 
       } else if (!searchUser.isPrivateProfile() || checkFollowing(user, searchUser)) {
-        return ResponseEntity.ok(searchUser.generatePublicUser());
+        return ResponseEntity.ok(searchUser.generateVisibleUser());
 
       } else {
-        return ResponseEntity.ok(searchUser.generatePrivateUser());
+        return ResponseEntity.ok(searchUser.generatePubliclyVisibleUser());
       }
 
     } else {

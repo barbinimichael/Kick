@@ -25,6 +25,8 @@ public class FollowingNotification {
   @JsonBackReference
   private ApplicationUser influencer;
 
+  private String following;
+
   private long time;
   private long theFollowingId;
 
@@ -32,9 +34,10 @@ public class FollowingNotification {
 
   }
 
-  public FollowingNotification(ApplicationUser influencer, long theFollowingId) {
+  public FollowingNotification(ApplicationUser influencer, long theFollowingId, String following) {
     this.influencer = influencer;
     this.theFollowingId = theFollowingId;
+    this.following = following;
 
     this.time = Instant.now().toEpochMilli();
   }
@@ -69,5 +72,13 @@ public class FollowingNotification {
 
   public void setTheFollowingId(long theFollowingId) {
     this.theFollowingId = theFollowingId;
+  }
+
+  public String getFollowing() {
+    return following;
+  }
+
+  public void setFollowing(String following) {
+    this.following = following;
   }
 }

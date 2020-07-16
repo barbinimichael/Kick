@@ -34,8 +34,6 @@ class UserFeed extends Component {
   };
 
   render() {
-    console.log("feed", this.state.feed);
-
     if (this.state.update) {
       this.createFeed();
     }
@@ -43,7 +41,7 @@ class UserFeed extends Component {
     return (
       <div>
         {this.state.feed.map((user) => (
-          <UserCard user={user} />
+          <UserCard user={user} meUsername={this.props.meUser.username} />
         ))}
       </div>
     );

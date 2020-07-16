@@ -8,9 +8,19 @@ class PostPage extends Component {
   state = { post: [], liked: false };
 
   componentDidMount() {
+    this.getPost();
+  }
+
+  componentDidUpdate(props) {
+    if (this.props !== props) {
+      this.getPost();
+    }
+  }
+
+  getPost = () => {
     API({
       method: "get",
-      url: `/api/posts?id=${this.props.match.params.postId}`,
+      url: `/api/posts/${this.props.match.params.postId}`,
     })
       .then((response) => {
         this.setState({ post: response.data });
@@ -25,29 +35,7 @@ class PostPage extends Component {
       .catch((error) => {
         console.log(error);
       });
-  }
-
-  componentDidUpdate(props) {
-    if (this.props !== props) {
-      API({
-        method: "get",
-        url: `/api/posts?id=${this.props.match.params.postId}`,
-      })
-        .then((response) => {
-          this.setState({ post: response.data });
-
-          API({
-            method: "get",
-            url: `api/posts/${response.data.id}/liked`,
-          }).then((liked) => {
-            this.setState({ liked: liked.data });
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }
+  };
 
   handleUserLiked = (postId) => {
     API({

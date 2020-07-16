@@ -49,12 +49,10 @@ public class Controller {
   }
 
   protected boolean checkFollowing(ApplicationUser follower, ApplicationUser influencer) {
-    Set<Following> influencers = follower.getWhereIsInfluencer();
+    Set<Following> followers = influencer.getWhereIsInfluencer();
 
-    for (Following f : influencers) {
-      if (f.getInfluencer() == null) {
-        continue;
-      } else if (f.getInfluencer().equals(influencer)) {
+    for (Following f : followers) {
+      if (f.getFollower() != null && f.getFollower().equals(follower)) {
         return f.isAccepted();
       }
     }

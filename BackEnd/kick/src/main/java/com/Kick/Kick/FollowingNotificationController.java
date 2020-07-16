@@ -26,7 +26,7 @@ public class FollowingNotificationController extends Controller {
     this.followingRepository = followingRepository;
   }
 
-  @GetMapping("/api/followingNotifications/single/id}")
+  @GetMapping("/api/followingNotifications/single/{id}")
   public ResponseEntity getFollowingNotification(Authentication authentication, @PathVariable @NonNull Long id) {
     Optional<FollowingNotification> maybeFollowingNotification = followingNotificationRepository.findById(id);
 

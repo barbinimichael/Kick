@@ -71,12 +71,14 @@ public class FollowingController extends Controller {
         Following following = maybeFollowing.get();
 
         if (following.isAccepted()) {
-          return ResponseEntity.ok(true);
+          return ResponseEntity.ok("following");
+        } else{
+          return ResponseEntity.ok("requested following");
         }
 
       }
     }
-    return ResponseEntity.ok(false);
+    return ResponseEntity.ok("not following");
   }
 
   @GetMapping("/api/followings/followers/{username}")
@@ -144,7 +146,7 @@ public class FollowingController extends Controller {
     return ResponseEntity.ok(new PageImpl<ApplicationUser>(new ArrayList<>(), pageable, 0));
   }
 
-  @PostMapping("/api/followings")
+  @PostMapping("/api/followings/{username}")
   public ResponseEntity follow(Authentication authentication, @PathVariable @NonNull String username) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
@@ -153,18 +155,23 @@ public class FollowingController extends Controller {
       ApplicationUser influencer = maybeInfluencer.get();
       Following newFollowing = new Following(user, influencer);
 
-      Following savedFollowing;
+      if (followingRepository.findByFollowerUsernameAndInfluencerUsername(user.getUsername(), influencer.getUsername()).isEmpty()) {
+        Following savedFollowing;
 
-      if (!influencer.isPrivateProfile()) {
-        newFollowing.setAccepted(true);
-        savedFollowing = followingRepository.save(newFollowing);
+        if (!influencer.isPrivateProfile()) {
+          newFollowing.setAccepted(true);
+          savedFollowing = followingRepository.save(newFollowing);
+
+        } else {
+          savedFollowing = followingRepository.save(newFollowing);
+          followingNotificationRepository.save(new FollowingNotification(influencer, savedFollowing.getId(), user.getUsername()));
+        }
+
+        return ResponseEntity.ok(savedFollowing);
 
       } else {
-        savedFollowing = followingRepository.save(newFollowing);
-        followingNotificationRepository.save(new FollowingNotification(influencer, savedFollowing.getId()));
+        return handleBadRequest("following already created for " + username);
       }
-      
-      return ResponseEntity.ok(savedFollowing);
 
     } else {
       return handleNotFound(username);
@@ -178,6 +185,7 @@ public class FollowingController extends Controller {
 
     if (maybeFollowing.isPresent()) {
       Following following = maybeFollowing.get();
+      // logger.info(authentication.getName() + " is accepting: " + String.valueOf(condition) + " user: " + following.getFollower());
 
       // check that it is the user who accepting is the user that was being requested
       if (user.getWhereIsInfluencer().contains(following)) {
@@ -214,6 +222,47 @@ public class FollowingController extends Controller {
 
     } else {
       return handleNotFound(id.toString());
+    }
+  }
+
+  @DeleteMapping("/api/followings/follower/deleting/influencer/{follower}/{influencer}")
+  public ResponseEntity userDeleteFollowing(Authentication authentication, @PathVariable @NonNull String follower, @PathVariable @NonNull String influencer) {
+    ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+    Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(follower, influencer);
+
+    if (maybeFollowing.isPresent()) {
+      Following following = maybeFollowing.get();
+
+      if (following.getInfluencer().getUsername().equals(influencer) && following.getFollower().getUsername().equals(follower)) {
+        followingRepository.deleteById(following.getId());
+        return handleSuccess("Deleted follow successfully");
+
+      } else {
+        return handleBadCredentials(user.getUsername());
+      }
+
+    } else {
+      return handleNotFound(follower + " " + user);
+    }
+  }
+
+  @DeleteMapping("/api/followings/influencer/deleting/follower/{influencer}/{follower}")
+  public ResponseEntity influencerDeleteFollowing(Authentication authentication, @PathVariable @NonNull String follower, @PathVariable @NonNull String influencer) {
+    ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+    Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(follower, influencer);
+
+    if (maybeFollowing.isPresent()) {
+      Following following = maybeFollowing.get();
+
+      if (following.getInfluencer().getUsername().equals(influencer) && following.getFollower().getUsername().equals(influencer)) {
+        followingRepository.deleteById(following.getId());
+        return handleSuccess("Deleted follow successfully");
+      } else {
+        return handleBadCredentials(user.getUsername());
+      }
+
+    } else {
+      return handleNotFound(follower + " " + user);
     }
   }
 

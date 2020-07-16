@@ -351,9 +351,6 @@ public class ApplicationUser {
   }
 
   public void addWhereIsInfluencer(Following influencer) {
-    logger.info("In user: " + username);
-    logger.info("influencer " + influencer.getInfluencer());
-    logger.info("follower " + influencer.getFollower());
     this.whereIsInfluencer.add(influencer);
   }
 
@@ -429,23 +426,27 @@ public class ApplicationUser {
     this.followingNotifications.add(followingNotification);
   }
 
-  public ApplicationUser generatePrivateUser() {
-    return new ApplicationUser(
-        this.username,
-        "",
-        this.firstName,
-        this.lastName,
-        "",
-        "0001-01-01",
-        this.city,
-        this.country,
-        "",
-        this.biography,
-        this.profilePictureURL,
-        true);
+  public ApplicationUser generatePubliclyVisibleUser() {
+    if (this.isPrivateProfile()) {
+      return new ApplicationUser(
+          this.username,
+          "",
+          this.firstName,
+          this.lastName,
+          "",
+          "0001-01-01",
+          this.city,
+          this.country,
+          "",
+          this.biography,
+          this.profilePictureURL,
+          true);
+    } else {
+      return this.generateVisibleUser();
+    }
   }
 
-  public ApplicationUser generatePublicUser() {
+  public ApplicationUser generateVisibleUser() {
     return new ApplicationUser(
         this.username,
         "",
@@ -458,7 +459,7 @@ public class ApplicationUser {
         this.gender,
         this.biography,
         this.profilePictureURL,
-        true,
+        this.privateProfile,
         this.posts,
         this.whereIsInfluencer,
         this.whereIsFollower,

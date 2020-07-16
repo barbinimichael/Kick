@@ -13,7 +13,7 @@ class LikeNotification extends Component {
     this.setState({ show: false });
 
     API({
-      method: "get",
+      method: "delete",
       url: `/api/likeNotifications/single/${this.props.notification.thePostId}`,
     }).catch((error) => {
       console.log(error);
@@ -25,18 +25,17 @@ class LikeNotification extends Component {
       <Toast show={this.state.show} onClose={this.handleClose}>
         <Toast.Header>
           <img src={heartFill} className="rounded mr-2" alt="" />
-          <strong className="mr-auto"></strong>
+          <strong className="mr-auto">
+            <Link to={`/user/${this.props.notification.userLiked}`}>
+              {this.props.notification.userLiked}
+            </Link>{" "}
+            liked your{" "}
+            <Link to={`/post/${this.props.notification.thePostId}`}>post</Link>
+          </strong>
           <small>
             <Time time={this.props.notification.time} />
           </small>
         </Toast.Header>
-        <Toast.Body>
-          <Link to={`/user/${this.props.notification.userLiked}`}>
-            {this.props.notification.userLiked}
-          </Link>{" "}
-          liked your{" "}
-          <Link to={`/post/${this.props.notification.thePostId}`}>post</Link>
-        </Toast.Body>
       </Toast>
     );
   }

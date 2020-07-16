@@ -1,22 +1,21 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-import { Container, Row, Col } from "react-bootstrap";
-import Jumbotron from "react-bootstrap/Jumbotron";
-import Image from "react-bootstrap/Image";
-import Badge from "react-bootstrap/Badge";
+import {
+  Container,
+  Row,
+  Col,
+  Image,
+  Badge,
+  Jumbotron,
+  Button,
+} from "react-bootstrap";
 import logo from "../logo.svg";
 
 import API from "../api/api";
 
 class UserCard extends Component {
-  state = { update: false, following: false };
-
-  componentDidUpdate(props) {
-    if (this.props !== props) {
-      this.setState({ update: true });
-    }
-  }
+  state = { following: "not following" };
 
   componentDidMount() {
     this.checkFollowing();
@@ -30,18 +29,61 @@ class UserCard extends Component {
       .then((response) => {
         console.log("Following", response);
         this.setState({ following: response.data });
-        this.setState({ update: false });
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  render() {
-    if (this.state.update) {
-      this.checkFollowing();
+  handleFollow = () => {
+    API({
+      method: "post",
+      url: `/api/followings/${this.props.user.username}`,
+    })
+      .then(() => {
+        this.checkFollowing();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  handleDeleteFollow = () => {
+    API({
+      method: "delete",
+      url: `/api/followings/follower/deleting/influencer/${this.props.meUsername}/${this.props.user.username}`,
+    })
+      .then(() => {
+        this.checkFollowing();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  createFollowingBanner = () => {
+    if (this.props.meUsername === this.props.user.username) {
+      return <React.Fragment></React.Fragment>;
     }
 
+    if (this.state.following === "following") {
+      return (
+        <Button onClick={this.handleDeleteFollow} size="sm">
+          UnFollow
+        </Button>
+      );
+    } else if (this.state.following === "requested following") {
+      return <Badge>Requested</Badge>;
+    } else {
+      return (
+        <Button onClick={this.handleFollow} size="sm">
+          Follow
+        </Button>
+      );
+    }
+  };
+
+  render() {
     let followerWord = "Followers";
     if (
       this.props.user.whereIsInfluencer &&
@@ -49,6 +91,8 @@ class UserCard extends Component {
     ) {
       followerWord = "Follower";
     }
+
+    console.log("User card", this.props.user);
 
     return (
       <Jumbotron>
@@ -62,27 +106,22 @@ class UserCard extends Component {
         <Link to={`/user/${this.props.user.username}`}>
           {this.props.user.username}
         </Link>
-        {"  | "}
-        {this.props.user.city}, {this.props.user.country}
-        {"  "}
-        {this.props.user.privateProfile ? (
-          <Badge pill variant="warning">
-            Private
-          </Badge>
-        ) : (
+        {"    "}
+        {!this.props.user.privateProfile ? (
           <Badge pill variant="success">
             Public
           </Badge>
-        )}
-        {this.state.following ? (
-          <Badge pill variant="info">
-            Following
-          </Badge>
         ) : (
-          <Badge pill variant="danger">
-            Not Following
-          </Badge>
+          <React.Fragment>
+            <Badge pill variant="warning">
+              Private
+            </Badge>
+          </React.Fragment>
         )}
+        {this.createFollowingBanner()}
+        <div>
+          {this.props.user.city}, {this.props.user.country}
+        </div>
         <Container>
           <Row>
             <Col align="right">
@@ -95,9 +134,9 @@ class UserCard extends Component {
               )}
             </Col>
             <Col align="left">
-              {this.props.user.whereIsInfluencer ? (
+              {this.props.user.whereIsFollower ? (
                 <Link to={`/influencers/${this.props.user.username}`}>
-                  {this.props.user.whereIsInfluencer.length} Following
+                  {this.props.user.whereIsFollower.length} Following
                 </Link>
               ) : (
                 "0 Following"

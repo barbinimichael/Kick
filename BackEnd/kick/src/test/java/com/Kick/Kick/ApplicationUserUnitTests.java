@@ -1,11 +1,5 @@
 package com.Kick.Kick;
 
-import com.Kick.Kick.ApiError;
-import com.Kick.Kick.ApplicationUser;
-import com.Kick.Kick.ApplicationUserController;
-import com.Kick.Kick.ApplicationUserRepository;
-import com.Kick.Kick.PostController;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.Kick.Kick.MockAuthentication;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -126,7 +119,7 @@ class ApplicationUserUnitTests {
 
     Pageable pageable = PageRequest.of(0, 5);
 
-    PageImpl resultExact = new PageImpl(Arrays.asList(mThree.generatePublicUser()));
+    PageImpl resultExact = new PageImpl(Arrays.asList(mThree.generateVisibleUser()));
     ResponseEntity responseExact =
         applicationUserController.findAllBySpecification("search=username:*a*", pageable);
 
@@ -176,8 +169,8 @@ class ApplicationUserUnitTests {
         applicationUserController.getApplicationUserFromId(new MockAuthentication(mThree), m.getId());
 
     assertEquals(m, responseSame.getBody());
-    assertEquals(m.generatePrivateUser(), responsePrivateOne.getBody());
-    assertEquals(m.generatePrivateUser(), responsePrivateTwo.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responsePrivateOne.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responsePrivateTwo.getBody());
 
     ResponseEntity notFound =
         applicationUserController.getApplicationUserFromId(new MockAuthentication(m), (long) 1000);
@@ -200,8 +193,8 @@ class ApplicationUserUnitTests {
         applicationUserController.getApplicationUserFromUsername(new MockAuthentication(mThree), m.getUsername());
 
     assertEquals(m, responseSame.getBody());
-    assertEquals(m.generatePrivateUser(), responsePrivateOne.getBody());
-    assertEquals(m.generatePrivateUser(), responsePrivateTwo.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responsePrivateOne.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responsePrivateTwo.getBody());
 
     ResponseEntity notFound =
         applicationUserController.getApplicationUserFromUsername(new MockAuthentication(m), "not found");

@@ -80,8 +80,8 @@ public class PostController extends Controller {
     return ResponseEntity.ok(postRepository.findByAttributes(search, pageable));
   }
 
-  @GetMapping("/api/posts")
-  public ResponseEntity getPost(Authentication authentication, @RequestParam("id") Long id) {
+  @GetMapping("/api/posts/{id}")
+  public ResponseEntity getPost(Authentication authentication, @PathVariable @NonNull long id) {
     Optional<Post> maybePost = postRepository.findById(id);
 
     if (maybePost.isPresent()) {
@@ -99,7 +99,7 @@ public class PostController extends Controller {
       }
 
     } else {
-      return handleNotFound(id.toString());
+      return handleNotFound(String.valueOf(id));
     }
   }
 
@@ -110,8 +110,8 @@ public class PostController extends Controller {
     return(ResponseEntity.ok(postRepository.save(newPost)));
   }
 
-  @PutMapping("/api/posts")
-  public ResponseEntity editPost(Authentication authentication, @RequestParam("id") Long id, @RequestBody Post newPost) {
+  @PutMapping("/api/posts/{id}")
+  public ResponseEntity editPost(Authentication authentication, @PathVariable @NonNull Long id, @RequestBody Post newPost) {
     Optional<Post> maybePost = postRepository.findById(id);
 
     if (maybePost.isPresent()) {
@@ -137,8 +137,8 @@ public class PostController extends Controller {
   }
 
 
-  @DeleteMapping("/api/posts")
-  public ResponseEntity deletePost(Authentication authentication, @RequestParam("id") Long id) {
+  @DeleteMapping("/api/posts/{id}")
+  public ResponseEntity deletePost(Authentication authentication, @PathVariable @NonNull Long id) {
     Optional<Post> maybePost = postRepository.findById(id);
 
     if (maybePost.isPresent()) {

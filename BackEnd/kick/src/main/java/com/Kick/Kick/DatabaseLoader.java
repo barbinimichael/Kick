@@ -1,5 +1,7 @@
 package com.Kick.Kick;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.Authentication;
@@ -35,6 +37,8 @@ public class DatabaseLoader implements CommandLineRunner {
   private ApplicationUser m;
   private Post pThree;
 
+  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
   @Autowired
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,
                         PostRepository postRepository,
@@ -66,7 +70,7 @@ public class DatabaseLoader implements CommandLineRunner {
         "USA",
         Gender.MALE,
         "Hi", "https://imgur.com/a/qKEjLCD",
-        false);
+        true);
 
     ApplicationUser mTwo = new ApplicationUser("mikey",
         "secure password",
@@ -155,10 +159,13 @@ public class DatabaseLoader implements CommandLineRunner {
         followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), newUser.getUsername()).get().getId(), true);
 
     followingController.follow(new MockAuthentication(newUser), m.getUsername());
-    followingController.acceptFollower(new MockAuthentication(m),
-        followingRepository.findByFollowerUsernameAndInfluencerUsername(newUser.getUsername(), m.getUsername()).get().getId(), true);
 
-    likePostController.like(new MockAuthentication(newUser), pThree.getId());
+    // if (generateRandomBoolean()) {
+      followingController.acceptFollower(new MockAuthentication(m),
+          followingRepository.findByFollowerUsernameAndInfluencerUsername(newUser.getUsername(), m.getUsername()).get().getId(), true);
+
+      likePostController.like(new MockAuthentication(newUser), pThree.getId());
+    // }
 
     users.add(newUser);
   }

@@ -76,6 +76,7 @@ class Search extends Component {
             (this.state.selectedOption === "userToggle") ? (
               <UserFeed
                 feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*`}
+                meUser={this.props.meUser}
               />
             ) : (
               <React.Fragment></React.Fragment>

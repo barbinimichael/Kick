@@ -173,8 +173,8 @@ public class FollowingUnitTest {
 
     assertEquals(m, responseSameTwo.getBody());
     assertTrue(applicationUserController.checkFollowing(mTwo, m));
-    assertEquals(m.generatePublicUser(), responseFollower.getBody());
-    assertEquals(m.generatePrivateUser(), responseStillPrivate.getBody());
+    assertEquals(m.generateVisibleUser(), responseFollower.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responseStillPrivate.getBody());
   }
 
   @Test
@@ -195,8 +195,8 @@ public class FollowingUnitTest {
 
     assertEquals(m, responseSameTwo.getBody());
     assertTrue(applicationUserController.checkFollowing(mTwo, m));
-    assertEquals(m.generatePublicUser(), responseFollower.getBody());
-    assertEquals(m.generatePrivateUser(), responseStillPrivate.getBody());
+    assertEquals(m.generateVisibleUser(), responseFollower.getBody());
+    assertEquals(m.generatePubliclyVisibleUser(), responseStillPrivate.getBody());
   }
 
   @Test
