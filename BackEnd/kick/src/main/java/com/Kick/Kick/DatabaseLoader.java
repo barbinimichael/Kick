@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +25,10 @@ public class DatabaseLoader implements CommandLineRunner {
   private final PostRepository postRepository;
   private final FollowingRepository followingRepository;
   private final LikePostRepository likePostRepository;
-  private final CommentPostRepository commentPostRepository;
   private final ApplicationUserController applicationUserController;
   private final FollowingController followingController;
   private final PostController postController;
-  private final LikePostController likePostController;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final LikeNotificationRepository likeNotificationRepository;
 
   private ArrayList<ApplicationUser> users = new ArrayList<>();
   private ApplicationUser m;
@@ -43,17 +40,18 @@ public class DatabaseLoader implements CommandLineRunner {
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,
                         PostRepository postRepository,
                         FollowingRepository followingRepository,
-                        LikePostRepository likePostRepository, CommentPostRepository commentPostRepository, ApplicationUserController applicationUserController, FollowingController followingController, PostController postController, LikePostController likePostController, BCryptPasswordEncoder bCryptPasswordEncoder) {
+                        LikePostRepository likePostRepository,
+                        ApplicationUserController applicationUserController,
+                        FollowingController followingController,
+                        PostController postController, LikeNotificationRepository likeNotificationRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
     this.followingRepository = followingRepository;
     this.likePostRepository = likePostRepository;
-    this.commentPostRepository = commentPostRepository;
     this.applicationUserController = applicationUserController;
     this.followingController = followingController;
     this.postController = postController;
-    this.likePostController = likePostController;
-    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.likeNotificationRepository = likeNotificationRepository;
   }
 
   @Override
@@ -115,7 +113,6 @@ public class DatabaseLoader implements CommandLineRunner {
     applicationUserController.signUp(mTwo);
 
     followingController.follow(new MockAuthentication(m), mTwo.getUsername());
-    followingController.acceptFollower(new MockAuthentication(mTwo), followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), mTwo.getUsername()).get().getId(), true);
 
     postController.newPost(new MockAuthentication(mTwo), p);
     postController.newPost(new MockAuthentication(mTwo), pTwo);
@@ -145,27 +142,38 @@ public class DatabaseLoader implements CommandLineRunner {
     );
     applicationUserController.signUp(newUser);
 
-    Post p = new Post(generateRandomString("caption:"),
+    Post newPost = new Post(generateRandomString("caption:"),
         generateRandomString("imageURL:"),
         generateRandomString("city:"),
         generateRandomString("country:"),
         "2020-01-01",
         newUser);
 
-    postController.newPost(new MockAuthentication(newUser), p);
+    postController.newPost(new MockAuthentication(newUser), newPost);
 
     followingController.follow(new MockAuthentication(m), newUser.getUsername());
-    followingController.acceptFollower(new MockAuthentication(newUser),
-        followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), newUser.getUsername()).get().getId(), true);
 
-    followingController.follow(new MockAuthentication(newUser), m.getUsername());
+    // artificially insert accepted following since cannot do multiple transactions in a row before start
+     if (generateRandomBoolean()) {
+       Following newFollowing = new Following(newUser, m);
+       newFollowing.setAccepted(true);
+       m.addWhereIsInfluencer(newFollowing);
+       newUser.addWhereIsFollower(newFollowing);
 
-    // if (generateRandomBoolean()) {
-      followingController.acceptFollower(new MockAuthentication(m),
-          followingRepository.findByFollowerUsernameAndInfluencerUsername(newUser.getUsername(), m.getUsername()).get().getId(), true);
+       LikePost newLike = new LikePost(newUser, pThree);
+       pThree.addLike(newLike);
 
-      likePostController.like(new MockAuthentication(newUser), pThree.getId());
-    // }
+       LikeNotification newLikeNotification = new LikeNotification(m, pThree, newUser.getUsername());
+
+       likeNotificationRepository.save(newLikeNotification);
+       likePostRepository.save(newLike);
+       postRepository.save(pThree);
+       followingRepository.save(newFollowing);
+       applicationUserRepository.save(m);
+       applicationUserRepository.save(newUser);
+     } else {
+       followingController.follow(new MockAuthentication(newUser), m.getUsername());
+     }
 
     users.add(newUser);
   }

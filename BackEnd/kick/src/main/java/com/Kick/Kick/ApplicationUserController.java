@@ -27,11 +27,13 @@ import static com.Kick.Kick.SecurityConstants.SIGN_UP_URL;
 public class ApplicationUserController extends Controller {
 
   private final ApplicationUserRepository applicationUserRepository;
+  private final FollowingRepository followingRepository;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired
-  public ApplicationUserController(ApplicationUserRepository applicationUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+  public ApplicationUserController(ApplicationUserRepository applicationUserRepository, FollowingRepository followingRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
     this.applicationUserRepository = applicationUserRepository;
+    this.followingRepository = followingRepository;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
@@ -67,7 +69,11 @@ public class ApplicationUserController extends Controller {
 
     } else {
       user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-      return ResponseEntity.ok(applicationUserRepository.save(user));
+      Following selfFollowing = new Following(user, user);
+      selfFollowing.setAccepted(true);
+      applicationUserRepository.save(user);
+      followingRepository.save(selfFollowing);
+      return ResponseEntity.ok(user);
     }
   }
 

@@ -56,7 +56,7 @@ public class FollowingController extends Controller {
   @GetMapping("/api/followings/check/{username}")
   public ResponseEntity isFollowing(Authentication authentication, @PathVariable @NonNull String username) {
     if (authentication.getName().equals(username)) {
-      return ResponseEntity.ok(true);
+      return ResponseEntity.ok("following");
     }
 
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);

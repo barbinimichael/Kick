@@ -63,7 +63,11 @@ class UserCard extends Component {
 
   createFollowingBanner = () => {
     if (this.props.meUsername === this.props.user.username) {
-      return <React.Fragment></React.Fragment>;
+      return (
+        <Badge pill variant="primary">
+          You!
+        </Badge>
+      );
     }
 
     if (this.state.following === "following") {
@@ -73,7 +77,7 @@ class UserCard extends Component {
         </Button>
       );
     } else if (this.state.following === "requested following") {
-      return <Badge>Requested</Badge>;
+      return <Badge pill>Requested</Badge>;
     } else {
       return (
         <Button onClick={this.handleFollow} size="sm">
@@ -81,6 +85,18 @@ class UserCard extends Component {
         </Button>
       );
     }
+  };
+
+  checkActualFollowerCount = (followers) => {
+    let count = 0;
+
+    followers.map((follower) => {
+      if (follower.accepted) {
+        count++;
+      }
+    });
+
+    return count;
   };
 
   render() {
@@ -118,6 +134,7 @@ class UserCard extends Component {
             </Badge>
           </React.Fragment>
         )}
+        {"    "}
         {this.createFollowingBanner()}
         <div>
           {this.props.user.city}, {this.props.user.country}
@@ -127,7 +144,10 @@ class UserCard extends Component {
             <Col align="right">
               {this.props.user.whereIsInfluencer ? (
                 <Link to={`/followers/${this.props.user.username}`}>
-                  {this.props.user.whereIsInfluencer.length} {followerWord}
+                  {this.checkActualFollowerCount(
+                    this.props.user.whereIsInfluencer
+                  )}{" "}
+                  {followerWord}
                 </Link>
               ) : (
                 "0 Followers"
@@ -136,7 +156,10 @@ class UserCard extends Component {
             <Col align="left">
               {this.props.user.whereIsFollower ? (
                 <Link to={`/influencers/${this.props.user.username}`}>
-                  {this.props.user.whereIsFollower.length} Following
+                  {this.checkActualFollowerCount(
+                    this.props.user.whereIsFollower
+                  )}{" "}
+                  Following
                 </Link>
               ) : (
                 "0 Following"

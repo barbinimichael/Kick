@@ -23,39 +23,23 @@ class Dashboard extends Component {
 
     let followingNotifications = this.state.followingNotifications.map(
       (notification, index) => (
-        <FollowingNotification key={index} notification={notification} />
+        <FollowingNotification
+          key={index + likeNotifications.length}
+          notification={notification}
+        />
       )
     );
 
-    let allNotificationComponents = likeNotifications.concat(
-      followingNotifications
+    let sort = function (a, b) {
+      return a.time < b.time ? -1 : a.time == b.time ? 0 : 1;
+    };
+
+    likeNotifications.sort(sort);
+    followingNotifications.sort(sort);
+
+    let allNotificationComponents = followingNotifications.concat(
+      likeNotifications
     );
-    let allNotifications = this.state.likeNotifications.concat(
-      this.state.followingNotifications
-    );
-
-    let list = [];
-    for (let j = 0; j < allNotifications.length; j++)
-      list.push({
-        component: allNotificationComponents[j],
-        notification: allNotifications[j],
-      });
-
-    //2) sort:
-    list.sort(function (a, b) {
-      return a.notification.time < b.notification.time
-        ? -1
-        : a.notification.time == b.notification.time
-        ? 0
-        : 1;
-      //Sort could be modified to, for example, sort on the age
-      // if the name is the same.
-    });
-
-    //3) separate them back out:
-    for (var k = 0; k < list.length; k++) {
-      allNotificationComponents[k] = list[k].component;
-    }
 
     return allNotificationComponents;
   };
