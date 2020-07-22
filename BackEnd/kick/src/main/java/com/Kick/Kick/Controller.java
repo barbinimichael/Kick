@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -9,8 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Controller {
-
-  private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
   protected ResponseEntity<ApiError> handleBadCredentials(String errorValue) {
     return ResponseEntity

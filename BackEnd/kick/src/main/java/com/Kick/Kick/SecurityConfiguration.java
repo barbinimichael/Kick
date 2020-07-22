@@ -36,7 +36,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable().authorizeRequests()
+    http
+        .requiresChannel()
+        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+        .requiresSecure().and()
+        .cors().and().csrf().disable().authorizeRequests()
         // .anyRequest().permitAll()
         .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL,
             SIGN_IN_URL).permitAll()

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -115,8 +113,6 @@ public class ApplicationUser {
       orphanRemoval = true)
   @JsonManagedReference
   private Set<FollowingNotification> followingNotifications;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   public ApplicationUser() {
   }

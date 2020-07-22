@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.Authentication;
@@ -33,8 +31,6 @@ public class DatabaseLoader implements CommandLineRunner {
   private ArrayList<ApplicationUser> users = new ArrayList<>();
   private ApplicationUser m;
   private Post pThree;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,

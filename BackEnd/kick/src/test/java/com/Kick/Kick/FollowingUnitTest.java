@@ -2,8 +2,6 @@ package com.Kick.Kick;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -26,8 +24,6 @@ public class FollowingUnitTest {
   private final ApplicationUserRepository applicationUserRepository;
   private final FollowingRepository followingRepository;
   private final PostRepository postRepository;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private ApplicationUser m;
   private ApplicationUser mTwo;
@@ -261,7 +257,6 @@ public class FollowingUnitTest {
     followingController.follow(new MockAuthentication(mTwo), mThree.getUsername());
 
     Following followingOne = followingRepository.findByFollowerUsernameAndInfluencerUsername(m.getUsername(), mTwo.getUsername()).get();
-    logger.info(followingOne.getId().toString());
 
     ResponseEntity deleteFollowing = followingController.deleteFollowing(new MockAuthentication(mTwo), followingOne.getId());
     assertEquals(HttpStatus.OK, deleteFollowing.getStatusCode());
@@ -271,7 +266,6 @@ public class FollowingUnitTest {
     assertEquals(HttpStatus.NOT_FOUND, notFoundResponse.getStatusCode());
 
     Following followingTwo = followingRepository.findByFollowerUsernameAndInfluencerUsername(mTwo.getUsername(), mThree.getUsername()).get();
-    logger.info(followingTwo.getId().toString());
     ResponseEntity badResponse = followingController.deleteFollowing(new MockAuthentication(m), followingTwo.getId());
     assertEquals(HttpStatus.FORBIDDEN, badResponse.getStatusCode());
     assertTrue(followingRepository.findByFollowerUsernameAndInfluencerUsername(mTwo.getUsername(), mThree.getUsername()).isPresent());

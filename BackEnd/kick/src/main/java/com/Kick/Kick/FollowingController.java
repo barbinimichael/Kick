@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,8 +22,6 @@ public class FollowingController extends Controller {
   private final ApplicationUserRepository applicationUserRepository;
   private final FollowingRepository followingRepository;
   private final FollowingNotificationRepository followingNotificationRepository;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public FollowingController(ApplicationUserRepository applicationUserRepository,
@@ -85,29 +81,24 @@ public class FollowingController extends Controller {
   public ResponseEntity getFollowers(Authentication authentication, @PathVariable @NonNull String username, Pageable pageable) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     if (authentication.getName().equals(username)) {
-      logger.info("Following controller same user");
       return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(user.getUsername(), true, pageable)));
     }
 
     Optional<ApplicationUser> maybeInfluencer = applicationUserRepository.findByUsername(username);
 
     if (maybeInfluencer.isPresent()) {
-      logger.info("Following controller influencer present");
       ApplicationUser influencer = maybeInfluencer.get();
 
       if (!influencer.isPrivateProfile()) {
-        logger.info("Following controller influencer was not private");
         return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
       }
 
       Optional<Following> maybeFollowing = followingRepository.findByFollowerUsernameAndInfluencerUsername(user.getUsername(), influencer.getUsername());
 
       if (maybeFollowing.isPresent()) {
-        logger.info("Following controller following present");
         Following following = maybeFollowing.get();
 
         if (following.isAccepted()) {
-          logger.info("Following controller following accepted");
           return ResponseEntity.ok(this.getFollowers(followingRepository.findAllByInfluencerUsernameAndAccepted(influencer.getUsername(), true, pageable)));
         }
 
@@ -185,7 +176,6 @@ public class FollowingController extends Controller {
 
     if (maybeFollowing.isPresent()) {
       Following following = maybeFollowing.get();
-      // logger.info(authentication.getName() + " is accepting: " + String.valueOf(condition) + " user: " + following.getFollower());
 
       // check that it is the user who accepting is the user that was being requested
       if (user.getWhereIsInfluencer().contains(following)) {
