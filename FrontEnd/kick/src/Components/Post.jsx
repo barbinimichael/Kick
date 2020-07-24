@@ -1,11 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import Image from "react-bootstrap/Image";
-import FormControl from "react-bootstrap/FormControl";
-import InputGroup from "react-bootstrap/InputGroup";
+import { Card, Button, Image, FormControl, InputGroup } from "react-bootstrap";
 import heart from "bootstrap-icons/icons/heart.svg";
 import heartFill from "bootstrap-icons/icons/heart-fill.svg";
 import chat from "bootstrap-icons/icons/chat.svg";

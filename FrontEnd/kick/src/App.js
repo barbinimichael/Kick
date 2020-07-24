@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
 
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import NavigationBar from "./Components/NavigationBar";
 import CreatePost from "./Pages/CreatePost";
 import Home from "./Pages/Home";
-import SignIn from "./Pages/SignIn";
+import SignIn from "./Pages/LogIn";
 import PrivateRoute from "./Components/PrivateRoute";
 import Registration from "./Pages/Registration";
 import Explore from "./Pages/Explore";
@@ -20,44 +21,31 @@ import PostPage from "./Pages/PostPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
-import history from "./Components/History";
+import { logout } from "./Actions/AuthenticationAction";
 
 class App extends Component {
   state = { user: [] };
 
   componentDidMount() {
-    this.getSelfInformation();
-  }
-
-  getSelfInformation = () => {
-    API({
-      method: "get",
-      url: "api/applicationUsers/self",
-    })
-      .then((response) => {
-        this.setState({ user: response.data });
+    if (this.props.loggedIn) {
+      API({
+        method: "get",
+        url: "api/applicationUsers/self",
       })
-      .catch((error) => {
-        console.log(error);
-        this.handleLogout();
-      });
-  };
-
-  handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("Authorization");
-    history.push("/sign-in");
-
-    if (localStorage["checkedLogin"] === "") {
-      localStorage.setItem("checkedLogin", true);
-      document.location.reload(true);
+        .then((response) => {
+          this.setState({ user: response.data });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.props.logout();
+        });
     }
-  };
+  }
 
   render() {
     return (
       <Router>
-        {localStorage["Authorization"] ? <NavigationBar /> : <div></div>}
+        {this.props.loggedIn ? <NavigationBar /> : <div></div>}
         <Switch>
           <PrivateRoute
             path="/"
@@ -99,4 +87,14 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.loggedIn,
+  };
+};
+
+const mapDispatchToProps = {
+  logout,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,18 +1,12 @@
 import React, { Component } from "react";
-
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Nav from "react-bootstrap/Nav";
+import { connect } from "react-redux";
+import { Form, Button, Nav } from "react-bootstrap";
 
 import Page from "../Components/Page";
-import history from "../Components/History";
-import API from "../api/api";
+import { login } from "../Actions/AuthenticationAction";
 
 class SignIn extends Component {
-  state = { username: "", password: "", failed: false, login: false };
+  state = { username: "", password: "", failed: false };
 
   constructor(props) {
     super(props);
@@ -22,31 +16,12 @@ class SignIn extends Component {
 
   async handleAuthentication(e) {
     e.preventDefault();
-    await API({
-      method: "post",
-      url: "/login",
-      data: {
-        username: this.state.username,
-        password: this.state.password,
-      },
-      headers: {},
-    })
-      .then((response) => {
-        console.log(response);
-        localStorage.setItem("user", this.state.username);
-        localStorage.setItem("Authorization", response.headers.authorization);
-        this.setState({ login: true });
-        history.push("/");
-        window.location.reload(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ failed: true });
-      });
+    console.log("username", this.state.username);
+    console.log("username", this.state.password);
+    this.props.login(this.state.username, this.state.password);
   }
 
   handleChange(evt) {
-    console.log("handle login input change", evt.target.value);
     const value = evt.target.value;
     this.setState({
       [evt.target.name]: value,
@@ -108,4 +83,14 @@ class SignIn extends Component {
   }
 }
 
-export default SignIn;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.loggedIn,
+  };
+};
+
+const mapDispatchToProps = {
+  login,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

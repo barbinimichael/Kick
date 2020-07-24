@@ -31,7 +31,7 @@ class Dashboard extends Component {
     );
 
     let sort = function (a, b) {
-      return a.time < b.time ? -1 : a.time == b.time ? 0 : 1;
+      return a.time < b.time ? -1 : a.time === b.time ? 0 : 1;
     };
 
     likeNotifications.sort(sort);

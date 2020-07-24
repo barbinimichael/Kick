@@ -1,19 +1,12 @@
 import React, { Component } from "react";
-import logo from "../logo.svg";
+import { connect } from "react-redux";
 import { Navbar, Nav, Button } from "react-bootstrap";
 
 import personCircle from "bootstrap-icons/icons/person-circle.svg";
-
-import history from "./History";
+import logo from "../logo.svg";
+import { logout } from "../Actions/AuthenticationAction";
 
 class NavigationBar extends Component {
-  handleSignOut = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("Authorization");
-    history.push("/sign-in");
-    window.location.reload(false);
-  };
-
   render() {
     return (
       <Navbar bg="light" expand="lg" fixed="top">
@@ -52,7 +45,7 @@ class NavigationBar extends Component {
                 alt="React Bootstrap logo"
               />
             </Navbar.Brand>
-            <Button onClick={this.handleSignOut}>Sign Out</Button>
+            <Button onClick={this.props.logout}>Sign Out</Button>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -60,4 +53,14 @@ class NavigationBar extends Component {
   }
 }
 
-export default NavigationBar;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.loggedIn,
+  };
+};
+
+const mapDispatchToProps = {
+  logout,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar);
