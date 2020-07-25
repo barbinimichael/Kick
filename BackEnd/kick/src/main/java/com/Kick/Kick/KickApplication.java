@@ -22,8 +22,7 @@ public class KickApplication {
 
 	@GetMapping(value = "/")
 	String index() {
-		// index.html
-		return "index";
+		return "Kick Backend";
 	}
 
 }
