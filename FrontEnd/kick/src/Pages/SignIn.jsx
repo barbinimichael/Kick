@@ -1,18 +1,14 @@
 import React, { Component } from "react";
-
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Nav from "react-bootstrap/Nav";
+import { connect } from "react-redux";
+import { Form, Button, Nav, Alert } from "react-bootstrap";
+import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
 import history from "../Components/History";
 import API from "../api/api";
 
 class SignIn extends Component {
-  state = { username: "", password: "", failed: false, login: false };
+  state = { username: "", password: "" };
 
   constructor(props) {
     super(props);
@@ -58,46 +54,67 @@ class SignIn extends Component {
       <Page
         middleComponent={
           <React.Fragment>
-            <Form>
-              <Form.Group controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="username"
-                  placeholder="Enter username"
-                  onChange={this.handleChange}
-                  name="username"
-                />
-              </Form.Group>
+            <img
+              src={speaker}
+              width="30"
+              height="30"
+              className="align-baseline"
+              alt="Kick logo"
+            />{" "}
+            <span className="large-text">Kick</span>
+            <p className="italic">
+              <small>Make sharing easier</small>
+            </p>
+            <div className="sign-in-border">
+              <Form>
+                <Form.Group>
+                  {this.props.registered ? (
+                    <Alert variant="success">
+                      Registration successful, login!
+                    </Alert>
+                  ) : (
+                    <React.Fragment></React.Fragment>
+                  )}
+                </Form.Group>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Control
+                    type="username"
+                    placeholder="Username"
+                    onChange={this.handleChange}
+                    name="username"
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  onChange={this.handleChange}
-                  name="password"
-                />
-              </Form.Group>
-              {this.state.failed === true ? (
-                <Form.Text className="text-muted">
-                  The username or password you provided was incorrect
-                </Form.Text>
-              ) : (
-                <React.Fragment />
-              )}
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={this.handleAuthentication}
-              >
-                Submit
-              </Button>
-            </Form>
-
-            <Nav className="justify-content-center" activeKey="/home">
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    onChange={this.handleChange}
+                    name="password"
+                  />
+                </Form.Group>
+                <Form.Group controlId="formErrorNotification">
+                  {this.props.error === true ? (
+                    <Form.Text className="text-muted">
+                      The username or password you provided was incorrect
+                    </Form.Text>
+                  ) : (
+                    <React.Fragment />
+                  )}
+                </Form.Group>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={this.handleAuthentication}
+                >
+                  Submit
+                </Button>
+              </Form>
+            </div>
+            <Nav className="justify-content-center" activeKey="/register">
               <Nav.Item>
                 <Nav.Link href="/register">
-                  Don't have an account? Create one
+                  Don't have an account? Create one!
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -108,4 +125,16 @@ class SignIn extends Component {
   }
 }
 
-export default SignIn;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.loggedIn,
+    error: state.error,
+    registered: state.registered,
+  };
+};
+
+const mapDispatchToProps = {
+  login,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

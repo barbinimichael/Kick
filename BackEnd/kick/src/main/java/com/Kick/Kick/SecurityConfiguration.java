@@ -27,8 +27,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Autowired
   public SecurityConfiguration(ApplicationUserDetailsServiceImpl userDetailsService,
-                               BCryptPasswordEncoder bCryptPasswordEncoder,
-                               ApplicationUserRepository applicationUserRepository) {
+      BCryptPasswordEncoder bCryptPasswordEncoder, ApplicationUserRepository applicationUserRepository) {
     this.userDetailsService = userDetailsService;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     this.applicationUserRepository = applicationUserRepository;
@@ -38,12 +37,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable().authorizeRequests()
         // .anyRequest().permitAll()
-        .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL,
-            SIGN_IN_URL).permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .addFilter(new JWTAuthenticationFilter(authenticationManager(),
-            this.applicationUserRepository))
+        .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL, SIGN_IN_URL).permitAll()
+        .anyRequest().authenticated().and()
+        .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.applicationUserRepository))
         .addFilter(new JWTAuthorizationFilter(authenticationManager()))
         // this disables session creation on Spring Security
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -60,7 +56,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
     config.setAllowedMethods(Arrays.asList("GET", "PUT", "DELETE", "POST"));
     config.setExposedHeaders(List.of("Authorization"));
-    config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+    // config.setAllowedOrigins(List.of("https://kick-a7a7f.web.app")); //
+    // production
+    config.setAllowedOrigins(List.of("http://localhost:3000")); // local test
     source.registerCorsConfiguration("/**", config);
     return source;
   }

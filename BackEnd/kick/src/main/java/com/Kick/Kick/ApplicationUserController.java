@@ -73,7 +73,7 @@ public class ApplicationUserController extends Controller {
       selfFollowing.setAccepted(true);
       applicationUserRepository.save(user);
       followingRepository.save(selfFollowing);
-      return ResponseEntity.ok(user);
+      return ResponseEntity.ok("Registration successful");
     }
   }
 

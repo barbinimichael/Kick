@@ -55,6 +55,7 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.props.loggedIn);
     return (
       <Router>
         {localStorage["Authorization"] ? <NavigationBar /> : <div></div>}
