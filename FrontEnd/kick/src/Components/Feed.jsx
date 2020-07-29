@@ -111,7 +111,7 @@ class Feed extends Component {
     }
     return (
       <div>
-        {this.state.feed ? (
+        {this.state.feed && this.state.feed.length > 0 ? (
           this.state.feed.map((post, index) => (
             <Post
               key={post.id}
@@ -123,10 +123,10 @@ class Feed extends Component {
               handleUserUnLiked={this.handleUserUnLiked}
             ></Post>
           ))
-        ) : this.state.privateProfile ? (
-          <h1>No posts</h1>
+        ) : this.state.feed ? (
+          <h1 className="center">No Posts</h1>
         ) : (
-          <h1>Private profile</h1>
+          <h1 className="center">Private profile</h1>
         )}
       </div>
     );

@@ -33,7 +33,10 @@ class UserPage extends Component {
           <React.Fragment>
             {this.props.match.params.username === "me" ? (
               <React.Fragment>
-                <UserCard user={this.props.meUser} />
+                <UserCard
+                  user={this.props.meUser}
+                  meUsername={this.props.meUser.username}
+                />
                 <Feed
                   feedURL={"/api/posts/user/" + this.props.meUser.username}
                 />

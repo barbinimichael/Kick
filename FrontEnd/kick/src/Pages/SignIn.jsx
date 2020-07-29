@@ -4,8 +4,8 @@ import { Form, Button, Nav, Alert } from "react-bootstrap";
 import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
-import history from "../Components/History";
-import API from "../api/api";
+
+import { login } from "../Actions/AuthenticationAction";
 
 class SignIn extends Component {
   state = { username: "", password: "" };
@@ -18,27 +18,7 @@ class SignIn extends Component {
 
   async handleAuthentication(e) {
     e.preventDefault();
-    await API({
-      method: "post",
-      url: "/login",
-      data: {
-        username: this.state.username,
-        password: this.state.password,
-      },
-      headers: {},
-    })
-      .then((response) => {
-        console.log(response);
-        localStorage.setItem("user", this.state.username);
-        localStorage.setItem("Authorization", response.headers.authorization);
-        this.setState({ login: true });
-        history.push("/");
-        window.location.reload(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ failed: true });
-      });
+    this.props.login(this.state.username, this.state.password);
   }
 
   handleChange(evt) {

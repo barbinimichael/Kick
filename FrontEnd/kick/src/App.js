@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
 
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -17,48 +18,36 @@ import UserPage from "./Pages/UserPage";
 import FollowersPage from "./Pages/FollowersPage";
 import InfluencersPage from "./Pages/InfluencersPage";
 import PostPage from "./Pages/PostPage";
+import Settings from "./Pages/Settings";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
-import history from "./Components/History";
+import { login, logout } from "./Actions/AuthenticationAction";
 
 class App extends Component {
   state = { user: [] };
 
   componentDidMount() {
-    this.getSelfInformation();
+    if (this.props.loggedIn) {
+      API({
+        method: "get",
+        url: "api/applicationUsers/self",
+      })
+        .then((response) => {
+          this.setState({ user: response.data });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.props.logout();
+        });
+    }
   }
 
-  getSelfInformation = () => {
-    API({
-      method: "get",
-      url: "api/applicationUsers/self",
-    })
-      .then((response) => {
-        this.setState({ user: response.data });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.handleLogout();
-      });
-  };
-
-  handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("Authorization");
-    history.push("/sign-in");
-
-    if (localStorage["checkedLogin"] === "") {
-      localStorage.setItem("checkedLogin", true);
-      document.location.reload(true);
-    }
-  };
-
   render() {
-    console.log(this.props.loggedIn);
+    console.log("logged in", this.props.loggedIn);
     return (
       <Router>
-        {localStorage["Authorization"] ? <NavigationBar /> : <div></div>}
+        {this.props.loggedIn ? <NavigationBar /> : <div></div>}
         <Switch>
           <PrivateRoute
             path="/"
@@ -93,6 +82,7 @@ class App extends Component {
             meUser={this.state.user}
           />
           <PrivateRoute path="/post/:postId" component={PostPage} />
+          <PrivateRoute path="/settings" component={Settings} />
           <Route component={NoMatch} />
         </Switch>
       </Router>
@@ -100,4 +90,15 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.loggedIn,
+  };
+};
+
+const mapDispatchToProps = {
+  login,
+  logout,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

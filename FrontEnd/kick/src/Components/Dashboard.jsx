@@ -31,7 +31,7 @@ class Dashboard extends Component {
     );
 
     let sort = function (a, b) {
-      return a.time < b.time ? -1 : a.time == b.time ? 0 : 1;
+      return a.time < b.time ? -1 : a.time === b.time ? 0 : 1;
     };
 
     likeNotifications.sort(sort);
@@ -47,7 +47,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="sticky-top overflow-auto">
-        <h1>Dashboard</h1>
+        <h3 className="center">Notifications</h3>
         {this.createNotifications()}
       </div>
     );

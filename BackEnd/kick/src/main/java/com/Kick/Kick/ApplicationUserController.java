@@ -130,6 +130,34 @@ public class ApplicationUserController extends Controller {
     }
   }
 
+  @GetMapping("/api/applicationUsers/followingCount/{username}")
+  public ResponseEntity getApplicationUserFollowingCount(@PathVariable @NonNull String username) {
+    Optional<ApplicationUser> maybeSearchUser = applicationUserRepository.findByUsername(username);
+
+    if (maybeSearchUser.isPresent()) {
+      ApplicationUser searchUser = maybeSearchUser.get();
+
+      return ResponseEntity.ok((int) searchUser.getWhereIsInfluencer().stream().filter(Following::isAccepted).count());
+
+    } else {
+      return handleNotFound(username);
+    }
+  }
+
+  @GetMapping("/api/applicationUsers/influencerCount/{username}")
+  public ResponseEntity getApplicationUserInfluencerCount(@PathVariable @NonNull String username) {
+    Optional<ApplicationUser> maybeSearchUser = applicationUserRepository.findByUsername(username);
+
+    if (maybeSearchUser.isPresent()) {
+      ApplicationUser searchUser = maybeSearchUser.get();
+
+      return ResponseEntity.ok((int) searchUser.getWhereIsFollower().stream().filter(Following::isAccepted).count());
+
+    } else {
+      return handleNotFound(username);
+    }
+  }
+
   @PutMapping("/api/applicationUsers/username")
   public ResponseEntity changeApplicationUserUsername(Authentication authentication, @RequestBody String username) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();

@@ -78,3 +78,14 @@
 .large-text {
   font-size: 250%;
 }
+
+.center {
+  text-align: center;
+}
+
+.space-evenly {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}

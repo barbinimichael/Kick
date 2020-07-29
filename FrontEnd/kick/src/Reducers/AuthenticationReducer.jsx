@@ -10,7 +10,18 @@ import {
   REGISTER_FAIL_EMAIL,
 } from "../Actions/AuthenticationAction";
 
-const AuthenciationReduer = (state = {}, action) => {
+const AuthenciationReduer = (
+  state = {
+    loggingIn: false,
+    loggedIn: false,
+    error: false,
+    registering: false,
+    registered: false,
+    errorUsername: false,
+    errorEmail: false,
+  },
+  action
+) => {
   switch (action.type) {
     case REGISTER_FAIL_USERNAME:
       state = {
@@ -56,6 +67,10 @@ const AuthenciationReduer = (state = {}, action) => {
         loggingIn: false,
         loggedIn: false,
         error: false,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
       };
       localStorage.removeItem("user");
       localStorage.removeItem("Authorization");
@@ -77,6 +92,10 @@ const AuthenciationReduer = (state = {}, action) => {
         loggingIn: false,
         loggedIn: true,
         error: false,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
       };
       break;
 
@@ -99,6 +118,7 @@ const AuthenciationReduer = (state = {}, action) => {
         errorUsername: false,
         errorEmail: false,
       };
+      break;
   }
 
   return state;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 
 import API from "../api/api";
