@@ -17,11 +17,48 @@ class Registration extends Component {
     country: "",
     private: false,
     error: false,
+    missingValue: "",
   };
 
   handleRegistration = (evt) => {
     evt.preventDefault();
-    this.props.register(this.state);
+    let data = { ...this.state };
+    delete data.error;
+    delete data.missingValue;
+
+    console.log("registration data", data);
+
+    // check valid email format
+    if (
+      !data.email.includes("@") ||
+      !data.email.includes(".") ||
+      !(data.email.indexOf(".") > data.email.indexOf("@"))
+    ) {
+      this.setState({ missingValue: "a valid email format" });
+      return;
+    }
+
+    // check valid password format
+    if (
+      !/\d/.test(data.password) ||
+      !/[~`!@#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(data.password) ||
+      !/[a-z]/.test(data.password) ||
+      !(data.password.length > 7) ||
+      !(data.password.length < 21)
+    ) {
+      this.setState({ missingValue: "a valid password" });
+      return;
+    }
+
+    // check no missing fields
+    for (const property in data) {
+      if (data[property] === "") {
+        this.setState({ missingValue: property });
+        return;
+      }
+    }
+    this.setState({ missingValue: "" });
+    this.props.register(data);
   };
 
   handleChange = (evt) => {
@@ -62,7 +99,9 @@ class Registration extends Component {
                       name="username"
                     />
                   </Form.Group>
+                </Form.Row>
 
+                <Form.Row>
                   <Form.Group as={Col} controlId="formGridPassword">
                     <Form.Control
                       type="password"
@@ -70,6 +109,10 @@ class Registration extends Component {
                       onChange={this.handleChange}
                       name="password"
                     />
+                    <Form.Text className="text-muted">
+                      Password must be 8-20 characters. Include numbers,
+                      letters, and special characters.
+                    </Form.Text>
                   </Form.Group>
                 </Form.Row>
 
@@ -155,7 +198,17 @@ class Registration extends Component {
 
                 {this.props.error ? (
                   <Alert variant="danger">
-                    <p className="italic mb-0">An error has occurred</p>
+                    <p className="italic mb-0 center">An error has occurred</p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
+
+                {this.state.missingValue ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0 center">
+                      {this.state.missingValue} is required
+                    </p>
                   </Alert>
                 ) : (
                   <React.Fragment></React.Fragment>
