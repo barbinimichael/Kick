@@ -5,7 +5,7 @@ import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
 
-import { login } from "../Actions/AuthenticationAction";
+import { login, resetRegistration } from "../Actions/AuthenticationAction";
 
 class SignIn extends Component {
   state = { username: "", password: "" };
@@ -27,6 +27,12 @@ class SignIn extends Component {
     this.setState({
       [evt.target.name]: value,
     });
+  }
+
+  componentDidMount() {
+    if (!this.props.registered) {
+      this.props.resetRegistration();
+    }
   }
 
   render() {
@@ -115,6 +121,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   login,
+  resetRegistration,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

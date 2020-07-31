@@ -28,13 +28,15 @@ public class PostController extends Controller {
   private final PostRepository postRepository;
   private final ApplicationUserRepository applicationUserRepository;
   private final FollowingRepository followingRepository;
+  private final CommentPostRepository commentPostRepository;
 
   @Autowired
   public PostController(ApplicationUserRepository applicationUserRepository,
-                        PostRepository postRepository, FollowingRepository followingRepository) {
+                        PostRepository postRepository, FollowingRepository followingRepository, CommentPostRepository commentPostRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
     this.followingRepository = followingRepository;
+    this.commentPostRepository = commentPostRepository;
   }
 
   @GetMapping("/api/posts/user/{username}")
@@ -74,7 +76,6 @@ public class PostController extends Controller {
     return ResponseEntity.ok(feed);
   }
 
-  // page, size, sort
   @GetMapping("/api/posts/search")
   public ResponseEntity searchPost(Pageable pageable, @RequestParam("search") String search) {
     return ResponseEntity.ok(postRepository.findByAttributes(search, pageable));
@@ -93,6 +94,27 @@ public class PostController extends Controller {
 
       if (!post.getUser().isPrivateProfile() || postUser.equals(user) || checkFollowing(user, postUser)) {
         return ResponseEntity.ok(post);
+
+      } else {
+        return handleBadCredentials(user.getUsername());
+      }
+
+    } else {
+      return handleNotFound(String.valueOf(id));
+    }
+  }
+
+  @GetMapping("/api/posts/{id}/comments")
+  public ResponseEntity getPostComments(Authentication authentication, Pageable pageable, @PathVariable @NonNull long id) {
+    Optional<Post> maybePost = postRepository.findById(id);
+
+    if (maybePost.isPresent()) {
+      ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+      Post post = maybePost.get();
+      ApplicationUser postUser = post.getUser();
+
+      if (!post.getUser().isPrivateProfile() || postUser.equals(user) || checkFollowing(user, postUser)) {
+        return ResponseEntity.ok(commentPostRepository.findAllByPost(post, pageable));
 
       } else {
         return handleBadCredentials(user.getUsername());

@@ -3,15 +3,11 @@ import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  state = { feed: [], liked: [], update: false, privateProfile: false };
-
-  componentDidMount() {
-    this.createFeed();
-  }
+  state = { feed: [], liked: [], privateProfile: false };
 
   componentDidUpdate(props) {
     if (this.props !== props) {
-      this.setState({ update: true });
+      this.createFeed();
     }
   }
 
@@ -35,12 +31,10 @@ class Feed extends Component {
         Promise.all(requests).then((values) => {
           let liked = values.map((like) => like.data);
           this.setState({ liked });
-          this.setState({ update: false });
         });
       })
       .catch((error) => {
         console.log(error);
-        this.setState({ update: false });
       });
   };
 
@@ -105,10 +99,16 @@ class Feed extends Component {
     });
   };
 
+  handleUserDeleted = (postId) => {
+    API({
+      method: "delete",
+      url: `api/posts/${postId}`,
+    }).then(() => {
+      window.location.reload(true);
+    });
+  };
+
   render() {
-    if (this.state.update) {
-      this.createFeed();
-    }
     return (
       <div>
         {this.state.feed && this.state.feed.length > 0 ? (
@@ -121,6 +121,8 @@ class Feed extends Component {
               handleUserCommented={this.handleUserCommented}
               handleUserLiked={this.handleUserLiked}
               handleUserUnLiked={this.handleUserUnLiked}
+              handleUserDeleted={this.handleUserDeleted}
+              myPost={this.props.myPosts}
             ></Post>
           ))
         ) : this.state.feed ? (

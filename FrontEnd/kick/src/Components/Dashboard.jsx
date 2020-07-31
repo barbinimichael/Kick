@@ -16,8 +16,8 @@ class Dashboard extends Component {
 
   createNotifications = () => {
     if (
-      this.state.likeNotifications.length == 0 &&
-      this.state.followingNotifications.length == 0
+      this.state.likeNotifications.length === 0 &&
+      this.state.followingNotifications.length === 0
     ) {
       return <div className="center">No Notifications</div>;
     }

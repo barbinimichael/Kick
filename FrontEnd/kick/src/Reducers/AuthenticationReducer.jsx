@@ -4,10 +4,13 @@ import {
   LOGGING_IN,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
+  LOGIN_RESET,
   REGISTERING,
   REGISTER_SUCCESSFUL,
   REGISTER_FAIL_USERNAME,
   REGISTER_FAIL_EMAIL,
+  REGISTER_FAIL,
+  REGISTER_RESET,
 } from "../Actions/AuthenticationAction";
 
 const AuthenciationReduer = (
@@ -19,10 +22,33 @@ const AuthenciationReduer = (
     registered: false,
     errorUsername: false,
     errorEmail: false,
+    errorRegister: false,
   },
   action
 ) => {
   switch (action.type) {
+    case REGISTER_RESET:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: false,
+      };
+      break;
+
+    case REGISTER_FAIL:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: true,
+      };
+      break;
+
     case REGISTER_FAIL_USERNAME:
       state = {
         ...state,
@@ -77,6 +103,15 @@ const AuthenciationReduer = (
       history.push("/sign-in");
       break;
 
+    case LOGIN_RESET:
+      state = {
+        ...state,
+        loggingIn: false,
+        loggedIn: false,
+        error: false,
+      };
+      break;
+
     case LOGGING_IN:
       state = {
         ...state,
@@ -96,6 +131,7 @@ const AuthenciationReduer = (
         registered: false,
         errorUsername: false,
         errorEmail: false,
+        errorRegister: false,
       };
       break;
 
@@ -117,6 +153,7 @@ const AuthenciationReduer = (
         registered: false,
         errorUsername: false,
         errorEmail: false,
+        errorRegister: false,
       };
       break;
   }

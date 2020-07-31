@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
-import { register } from "../Actions/AuthenticationAction";
+import { register, resetLogin } from "../Actions/AuthenticationAction";
 
 class Registration extends Component {
   state = {
@@ -15,7 +15,7 @@ class Registration extends Component {
     lastName: "",
     city: "",
     country: "",
-    private: false,
+    privateProfile: false,
     error: false,
     missingValue: "",
   };
@@ -41,7 +41,7 @@ class Registration extends Component {
     // check valid password format
     if (
       !/\d/.test(data.password) ||
-      !/[~`!@#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(data.password) ||
+      !/[~`!@#$%^&*+=\-[\]\\';,/{}|\\":<>?]/g.test(data.password) ||
       !/[a-z]/.test(data.password) ||
       !(data.password.length > 7) ||
       !(data.password.length < 21)
@@ -74,6 +74,10 @@ class Registration extends Component {
       [evt.target.name]: value,
     });
   };
+
+  componentDidMount() {
+    this.props.resetLogin();
+  }
 
   render() {
     return (
@@ -190,13 +194,13 @@ class Registration extends Component {
                 <Form.Group id="formGridPrivate">
                   <Form.Check
                     type="checkbox"
-                    label="Set private account"
+                    label="Set privateProfile account"
                     onChange={this.handleChecked}
-                    name="private"
+                    name="privateProfile"
                   />
                 </Form.Group>
 
-                {this.props.error ? (
+                {this.props.errorRegister ? (
                   <Alert variant="danger">
                     <p className="italic mb-0 center">An error has occurred</p>
                   </Alert>
@@ -237,7 +241,7 @@ class Registration extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.error,
+    errorRegister: state.errorRegister,
     errorUsername: state.errorUsername,
     errorEmail: state.errorEmail,
   };
@@ -245,6 +249,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   register,
+  resetLogin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Registration);

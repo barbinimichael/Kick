@@ -10,10 +10,8 @@ const InLineForm = (props) => {
           <Form.Label htmlFor="inlineFormInputGroup" srOnly></Form.Label>
           <InputGroup className="mb-2">
             <FormControl
-              id="inlineFormInputGroup"
-              placeholder={
-                props.description[0].toUpperCase() + props.description.slice(1)
-              }
+              id={props.description}
+              placeholder={props.current}
               type={props.description}
               name={props.description}
               onChange={props.handleChange}

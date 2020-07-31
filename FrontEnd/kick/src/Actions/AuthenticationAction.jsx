@@ -12,6 +12,7 @@ export function logout() {
 export const LOGGING_IN = "LOGGING IN";
 export const LOGIN_SUCCESS = "LOGIN SUCCESSFUL";
 export const LOGIN_FAIL = "LOGIN FAILED";
+export const LOGIN_RESET = "LOGIN RESET";
 
 export function login(username, password) {
   return (dispatch) => {
@@ -42,10 +43,24 @@ export function login(username, password) {
   };
 }
 
+export function resetLogin() {
+  return {
+    type: LOGIN_RESET,
+  };
+}
+
 export const REGISTERING = "REGISTERING";
 export const REGISTER_SUCCESSFUL = "REGISTER SUCCESSFUL";
 export const REGISTER_FAIL_USERNAME = "REGISTER FAILED DUE TO USERNAME";
 export const REGISTER_FAIL_EMAIL = "REGISTER FAILED DUE TO EMAIL";
+export const REGISTER_FAIL = "REGISTRATION FAILED";
+export const REGISTER_RESET = "REGISTER RESET";
+
+export function resetRegistration() {
+  return {
+    type: REGISTER_RESET,
+  };
+}
 
 export function register(data) {
   return (dispatch) => {
@@ -71,10 +86,10 @@ export function register(data) {
           } else if (error.response.data.error === "Email was already taken") {
             dispatch({ type: REGISTER_FAIL_EMAIL });
           } else {
-            dispatch({ type: LOGIN_FAIL });
+            dispatch({ type: REGISTER_FAIL });
           }
         } else {
-          dispatch({ type: LOGIN_FAIL });
+          dispatch({ type: REGISTER_FAIL });
         }
       });
   };

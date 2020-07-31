@@ -19,6 +19,7 @@ import FollowersPage from "./Pages/FollowersPage";
 import InfluencersPage from "./Pages/InfluencersPage";
 import PostPage from "./Pages/PostPage";
 import Settings from "./Pages/Settings";
+import CommentPage from "./Pages/CommentPage";
 
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
@@ -28,6 +29,10 @@ class App extends Component {
   state = { user: [] };
 
   componentDidMount() {
+    this.getUserInfo();
+  }
+
+  getUserInfo = () => {
     if (this.props.loggedIn) {
       API({
         method: "get",
@@ -41,7 +46,7 @@ class App extends Component {
           this.props.logout();
         });
     }
-  }
+  };
 
   render() {
     console.log("logged in", this.props.loggedIn);
@@ -69,6 +74,11 @@ class App extends Component {
             component={UserPage}
             meUser={this.state.user}
           />
+          <PrivateRoute
+            path="/comment/:postId"
+            component={CommentPage}
+            meUser={this.state.user}
+          />
           <Route path="/sign-in" exact component={SignIn} />
           <Route path="/register" exact component={Registration} />
           <PrivateRoute
@@ -82,7 +92,12 @@ class App extends Component {
             meUser={this.state.user}
           />
           <PrivateRoute path="/post/:postId" component={PostPage} />
-          <PrivateRoute path="/settings" component={Settings} />
+          <PrivateRoute
+            path="/settings"
+            component={Settings}
+            meUser={this.state.user}
+            handleChange={this.getUserInfo}
+          />
           <Route component={NoMatch} />
         </Switch>
       </Router>
