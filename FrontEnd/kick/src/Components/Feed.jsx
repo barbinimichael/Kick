@@ -3,7 +3,13 @@ import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  state = { feed: [], liked: [], privateProfile: false };
+  state = {
+    feed: [],
+    liked: [],
+    privateProfile: false,
+    page: -1,
+    totalPages: 0,
+  };
 
   componentDidUpdate(props) {
     if (this.props !== props) {
@@ -12,13 +18,21 @@ class Feed extends Component {
   }
 
   createFeed = () => {
+    // check that not requesting if no more pages
+    if (this.state.page >= this.state.totalPages) {
+      return;
+    }
+    this.setState({ page: this.state.page + 1 });
+
     API({
       method: "get",
-      url: this.props.feedURL,
+      url: this.props.feedURL + `?page=${this.state.page}&size=10`,
     })
       .then((response) => {
+        console.log("create feed response", response);
         let feed = response.data.content;
-        this.setState({ feed });
+        this.setState({ feed: this.state.feed.concat(feed) });
+        this.setState({ totalPages: response.data.totalPages });
 
         if (response.data === "Not following or public") {
           this.setState({ noPost: true });
@@ -30,7 +44,7 @@ class Feed extends Component {
         let requests = feed.map((post) => this.handleWhichUserLiked(post));
         Promise.all(requests).then((values) => {
           let liked = values.map((like) => like.data);
-          this.setState({ liked });
+          this.setState({ liked: this.state.liked.concat(liked) });
         });
       })
       .catch((error) => {
@@ -108,9 +122,26 @@ class Feed extends Component {
     });
   };
 
+  componentDidMount() {
+    document.addEventListener("scroll", this.handleScroll);
+  }
+
+  handleScroll = (e) => {
+    if (
+      document.getElementById("feed").getBoundingClientRect().bottom <=
+      window.innerHeight + 1
+    ) {
+      this.createFeed();
+    }
+  };
+
+  componentWillUnmount() {
+    document.removeEventListener("scroll", this.handleScroll);
+  }
+
   render() {
     return (
-      <div>
+      <div onScroll={this.handleScroll} id="feed">
         {this.state.feed && this.state.feed.length > 0 ? (
           this.state.feed.map((post, index) => (
             <Post

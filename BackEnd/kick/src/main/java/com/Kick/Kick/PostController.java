@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -61,6 +63,19 @@ public class PostController extends Controller {
 
   }
 
+  @GetMapping("/api/posts/explore")
+  public ResponseEntity getExplore(Pageable pageable) {
+    ArrayList<Post> randomPosts = new ArrayList<>();
+    int numEntries = pageable.getPageSize();
+    long repositorySize = postRepository.count();
+    for (int i = 0; i < numEntries; i++) {
+      int index = (int)(Math.random() * repositorySize);
+      Page<Post> post = postRepository.findAllByUserPrivateProfile(false, PageRequest.of(index, 1));
+      randomPosts.addAll(post.getContent());
+    }
+    return ResponseEntity.ok(new PageImpl<>(randomPosts));
+  }
+
   @GetMapping("/api/posts/feed")
   public ResponseEntity getFeed(Authentication authentication, Pageable pageable) {
     logger.info("logged in: " + authentication.getName());
@@ -72,7 +87,7 @@ public class PostController extends Controller {
         users.add(following.getInfluencer());
       }
     }
-    Page<Post> feed = postRepository.findByUserInOrderByTimeAsc(users, pageable);
+    Page<Post> feed = postRepository.findByUserInOrderByTimeDesc(users, pageable);
     return ResponseEntity.ok(feed);
   }
 

@@ -25,8 +25,6 @@ class Search extends Component {
   };
 
   render() {
-    console.log("state", this.state);
-
     let { search } = this.state;
     return (
       <Page

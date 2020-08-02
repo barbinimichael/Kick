@@ -31,7 +31,6 @@ class UserCard extends Component {
       url: `/api/applicationUsers/followingCount/${this.props.user.username}`,
     })
       .then((response) => {
-        console.log("Following count", response);
         this.setState({ followingCount: response.data });
       })
       .catch((error) => {
@@ -45,7 +44,6 @@ class UserCard extends Component {
       url: `/api/applicationUsers/influencerCount/${this.props.user.username}`,
     })
       .then((response) => {
-        console.log("Influencer count", response);
         this.setState({ influencerCount: response.data });
       })
       .catch((error) => {
@@ -59,7 +57,6 @@ class UserCard extends Component {
       url: `/api/followings/check/${this.props.user.username}`,
     })
       .then((response) => {
-        console.log("Following", response);
         this.setState({ following: response.data });
       })
       .catch((error) => {
@@ -131,8 +128,6 @@ class UserCard extends Component {
     ) {
       followerWord = "Follower";
     }
-
-    console.log("User card", this.props.user);
 
     return (
       <Jumbotron>

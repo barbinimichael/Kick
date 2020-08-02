@@ -5,6 +5,7 @@ import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
 import { register, resetLogin } from "../Actions/AuthenticationAction";
+import { checkEmail, checkPassword } from "../Components/CheckValidInput";
 
 class Registration extends Component {
   state = {
@@ -26,27 +27,15 @@ class Registration extends Component {
     delete data.error;
     delete data.missingValue;
 
-    console.log("registration data", data);
-
-    // check valid email format
-    if (
-      !data.email.includes("@") ||
-      !data.email.includes(".") ||
-      !(data.email.indexOf(".") > data.email.indexOf("@"))
-    ) {
-      this.setState({ missingValue: "a valid email format" });
+    let missingValue = checkEmail(data.email);
+    if (missingValue !== "") {
+      this.setState({ missingValue });
       return;
     }
 
-    // check valid password format
-    if (
-      !/\d/.test(data.password) ||
-      !/[~`!@#$%^&*+=\-[\]\\';,/{}|\\":<>?]/g.test(data.password) ||
-      !/[a-z]/.test(data.password) ||
-      !(data.password.length > 7) ||
-      !(data.password.length < 21)
-    ) {
-      this.setState({ missingValue: "a valid password" });
+    missingValue = checkPassword(data.password);
+    if (missingValue !== "") {
+      this.setState({ missingValue });
       return;
     }
 
@@ -57,7 +46,9 @@ class Registration extends Component {
         return;
       }
     }
-    this.setState({ missingValue: "" });
+
+    console.log("missing value", this.state.missingValue);
+
     this.props.register(data);
   };
 

@@ -132,7 +132,7 @@ public class DatabaseLoader implements CommandLineRunner {
         generateRandomString("firstName:"),
         generateRandomString("lastName:"),
         generateRandomString("email:"),
-        Instant.now(),
+            Instant.ofEpochSecond(new Random().nextInt()),
         generateRandomString("city:"),
         generateRandomString("country:"),
         Gender.OTHER,
@@ -146,7 +146,7 @@ public class DatabaseLoader implements CommandLineRunner {
         generateRandomString("imageURL:"),
         generateRandomString("city:"),
         generateRandomString("country:"),
-        "2020-01-01",
+            Instant.ofEpochSecond(new Random().nextInt()),
         newUser);
 
     postController.newPost(new MockAuthentication(newUser), newPost);
