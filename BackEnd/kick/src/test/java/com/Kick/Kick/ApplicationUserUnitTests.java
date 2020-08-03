@@ -2,8 +2,6 @@ package com.Kick.Kick;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -29,8 +27,6 @@ class ApplicationUserUnitTests {
   private final ApplicationUserController applicationUserController;
   private final ApplicationUserRepository applicationUserRepository;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private ApplicationUser m;
 

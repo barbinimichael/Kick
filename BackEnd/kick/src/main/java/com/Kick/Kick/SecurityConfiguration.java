@@ -34,7 +34,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable().authorizeRequests()
+    http
+        .requiresChannel()
+        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+        .requiresSecure().and()
+        .cors().and().csrf().disable().authorizeRequests()
         // .anyRequest().permitAll()
         .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL, SIGN_IN_URL).permitAll()
         .anyRequest().authenticated().and()
@@ -55,9 +59,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
     config.setAllowedMethods(Arrays.asList("GET", "PUT", "DELETE", "POST"));
     config.setExposedHeaders(List.of("Authorization"));
-    // config.setAllowedOrigins(List.of("https://kick-a7a7f.web.app")); //
-    // production
-    config.setAllowedOrigins(List.of("http://localhost:3000")); // local test
+    config.setAllowedOrigins(List.of("https://kick-a7a7f.web.app"));
     source.registerCorsConfiguration("/**", config);
     return source;
   }

@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,8 +22,6 @@ import java.util.Optional;
 
 @RestController
 public class PostController extends Controller {
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private final PostRepository postRepository;
   private final ApplicationUserRepository applicationUserRepository;
@@ -78,7 +74,6 @@ public class PostController extends Controller {
 
   @GetMapping("/api/posts/feed")
   public ResponseEntity getFeed(Authentication authentication, Pageable pageable) {
-    logger.info("logged in: " + authentication.getName());
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
     ArrayList<ApplicationUser> users = new ArrayList<>();
     users.add(user); // should be in own feed
@@ -104,8 +99,6 @@ public class PostController extends Controller {
       ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
       Post post = maybePost.get();
       ApplicationUser postUser = post.getUser();
-
-      logger.info("Post USER: " + postUser + " " + checkFollowing(user, postUser));
 
       if (!post.getUser().isPrivateProfile() || postUser.equals(user) || checkFollowing(user, postUser)) {
         return ResponseEntity.ok(post);

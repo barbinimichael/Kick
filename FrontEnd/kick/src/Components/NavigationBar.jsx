@@ -59,7 +59,7 @@ class NavigationBar extends Component {
                 alt="Settings"
               />
             </Navbar.Brand>
-            <Button onClick={this.handleSignOut}>Sign Out</Button>
+            <Button onClick={this.props.logout}>Sign Out</Button>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

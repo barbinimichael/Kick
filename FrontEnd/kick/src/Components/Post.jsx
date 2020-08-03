@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import { Card, Button, Image, FormControl, InputGroup } from "react-bootstrap";
-
 import heart from "bootstrap-icons/icons/heart.svg";
 import heartFill from "bootstrap-icons/icons/heart-fill.svg";
 import chat from "bootstrap-icons/icons/chat.svg";

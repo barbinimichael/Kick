@@ -3,8 +3,6 @@ package com.Kick.Kick;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,8 +40,6 @@ class KickApplicationTests {
 	private final LikePostRepository likePostRepository;
 	private final CommentPostRepository commentPostRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
 	private final ApplicationUser m = new ApplicationUser("miker",
 			"password",
@@ -110,7 +106,6 @@ class KickApplicationTests {
 	@Test
 	void registrationTest() throws Exception {
 		this.applicationUserRepository.deleteAll();
-		logger.info(objectMapper.writeValueAsString(m));
 
 		MvcResult result = mockMvc.perform(post("http://localhost:8081/api/applicationUsers/sign-up")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -154,9 +149,7 @@ class KickApplicationTests {
 				.andReturn();
 
 		String content = result.getResponse().getContentAsString();
-		logger.info(content);
 		String header = result.getResponse().getHeader("Authorization");
-		logger.info(header);
 
 	}
 
@@ -170,7 +163,6 @@ class KickApplicationTests {
 				"\"password\":\"password\"" +
 				"}";
 
-		logger.info("USER DATA TEST LOGGING IN");
 		MvcResult result = mockMvc.perform(post("http://localhost:8081/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept("*/*")
@@ -180,7 +172,6 @@ class KickApplicationTests {
 
 		String authorizationHeader = result.getResponse().getHeader("Authorization");
 
-		logger.info("USER DATA TEST GETTING OWN DATA");
 		MvcResult resultTwo = mockMvc.perform(get("http://localhost:8081/api/applicationUsers/self")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept("*/*")

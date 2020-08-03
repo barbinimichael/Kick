@@ -2,9 +2,6 @@ package com.Kick.Kick;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -31,8 +28,6 @@ public class Following {
   private ApplicationUser follower;
 
   private boolean accepted;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   public Following() {}
 

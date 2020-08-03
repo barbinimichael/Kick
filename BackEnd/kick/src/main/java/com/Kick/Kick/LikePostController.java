@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -21,8 +19,6 @@ public class LikePostController extends Controller {
   private final LikePostRepository likePostRepository;
   private final PostRepository postRepository;
   private final LikeNotificationRepository likeNotificationRepository;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public LikePostController(ApplicationUserRepository applicationUserRepository,

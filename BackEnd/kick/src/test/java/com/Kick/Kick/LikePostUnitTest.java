@@ -2,8 +2,6 @@ package com.Kick.Kick;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -26,8 +24,6 @@ public class LikePostUnitTest {
   private final PostRepository postRepository;
   private final LikePostController likePostController;
   private final LikePostRepository likePostRepository;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private ApplicationUser m;
   private ApplicationUser mTwo;

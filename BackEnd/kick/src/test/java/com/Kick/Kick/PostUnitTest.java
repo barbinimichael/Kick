@@ -2,8 +2,6 @@ package com.Kick.Kick;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -30,8 +28,6 @@ public class PostUnitTest {
   private final PostRepository postRepository;
   private final FollowingRepository followingRepository;
   private final ApplicationUserRepository applicationUserRepository;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private ApplicationUser m;
   private ApplicationUser mTwo;
@@ -257,11 +253,7 @@ public class PostUnitTest {
     ResponseEntity success = postController.newPost(new MockAuthentication(m), newPost);
     assertEquals(HttpStatus.OK, success.getStatusCode());
 
-    logger.info(String.valueOf(newPost.getId()));
     assertEquals(newPost, postRepository.findById(newPost.getId()).get());
-
-    logger.info(applicationUserRepository.findByUsername(m.getUsername()).get().getPosts().toString());
-    logger.info(postRepository.findAll().toString());
 
     // assertTrue(applicationUserRepository.findByUsername(m.getUsername()).get().getPosts().contains(newPost));
   }

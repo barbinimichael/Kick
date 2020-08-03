@@ -2,8 +2,6 @@ package com.Kick.Kick;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -25,8 +23,6 @@ public class CommentPostUnitTest {
   private final PostRepository postRepository;
   private final CommentPostRepository commentPostRepository;
   private final CommentPostController commentPostController;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   private ApplicationUser m;
   private ApplicationUser mTwo;
