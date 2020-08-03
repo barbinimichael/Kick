@@ -41,7 +41,7 @@ class NavigationBar extends Component {
           </Nav>
 
           <Nav className="ml-auto">
-            <Navbar.Brand href="/user/me">
+            <Navbar.Brand href={`/user/${this.props.meUser.username}`}>
               <img
                 src={personCircle}
                 width="30"

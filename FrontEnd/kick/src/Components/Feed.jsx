@@ -95,8 +95,7 @@ class Feed extends Component {
       liked[newIndex] = isLiked;
     }
 
-    this.setState({ feed: modified });
-    this.setState({ liked });
+    this.setState({ feed: modified, liked });
   };
 
   handleUserLiked = (postId) => {

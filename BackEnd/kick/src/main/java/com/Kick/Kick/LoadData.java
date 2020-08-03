@@ -1,73 +1,70 @@
 package com.Kick.Kick;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class LoadData {
 
-    private static final String localPath = System.getProperty("user.dir");
+    private String path = "/";
 
-    public static List<String> getFirstNames(int length) throws FileNotFoundException {
+    public List<String> getFirstNames(int length) throws IOException {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            list.add(choose(new File(localPath +"/src/main/resources/FirstNames.txt")));
+            list.add(choose(path + "FirstNames.txt"));
         }
         return list;
     }
 
-    public static List<String> getLastNames(int length) throws FileNotFoundException {
+    public List<String> getLastNames(int length) throws IOException {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            list.add(choose(new File(localPath +"/src/main/resources/LastNames.txt")));
+            list.add(choose(path + "LastNames.txt"));
         }
         return list;
     }
 
-    public static List<String> getCities(int length) throws FileNotFoundException {
+    public List<String> getCities(int length) throws IOException {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            list.add(choose(new File(localPath +"/src/main/resources/City.txt")));
+            list.add(choose(path + "City.txt"));
         }
         return list;
     }
 
-    public static List<String> getCountries(int length) throws FileNotFoundException {
+    public List<String> getCountries(int length) throws IOException {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            list.add(choose(new File(localPath +"/src/main/resources/Country.txt")));
+            list.add(choose(path + "Country.txt"));
         }
         return list;
     }
 
-    public static List<String> getBiographies(int length) throws FileNotFoundException {
+    public List<String> getBiographies(int length) throws IOException {
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             StringBuilder sentence = new StringBuilder();
             for (int j = 0; j < 5; j++) {
-                sentence.append(choose(new File(localPath + "/src/main/resources/Words.txt"))).append(" ");
+                sentence.append(choose(path + "Words.txt")).append(" ");
             }
             list.add(sentence.toString());
         }
         return list;
     }
 
-    private static String choose(File f) throws FileNotFoundException
-    {
-        String result = null;
+    private String choose(String name) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(name);
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         Random rand = new Random();
         int n = 100;
-        Scanner sc = new Scanner(f);
-        while ( sc.hasNextLine() )
-        {
-            ++n;
-            String line = sc.nextLine();
+        String line;
+        while ((line = br.readLine()) != null) {
             if(rand.nextInt(n) == 0) {
-                result = line;
-                return result;
+                return line;
             }
         }
 

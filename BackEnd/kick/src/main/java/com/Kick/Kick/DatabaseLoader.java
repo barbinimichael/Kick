@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Responsible for loading example data into the database.
@@ -58,62 +62,64 @@ public class DatabaseLoader implements CommandLineRunner {
   @Transactional
   public void run(String... strings) throws Exception {
 
-    randomFirstNames = LoadData.getFirstNames(numRandomGeneratedUsers);
-    randomLastNames = LoadData.getLastNames(numRandomGeneratedUsers);
-    randomCities = LoadData.getCities(numRandomGeneratedUsers);
-    randomCountries = LoadData.getCountries(numRandomGeneratedUsers);
-    randomBiographies = LoadData.getBiographies(numRandomGeneratedUsers);
+    LoadData loadData = new LoadData();
+
+    randomFirstNames = loadData.getFirstNames(numRandomGeneratedUsers);
+    randomLastNames = loadData.getLastNames(numRandomGeneratedUsers);
+    randomCities = loadData.getCities(numRandomGeneratedUsers);
+    randomCountries = loadData.getCountries(numRandomGeneratedUsers);
+    randomBiographies = loadData.getBiographies(numRandomGeneratedUsers);
 
     m = new ApplicationUser("mbarbzzz",
-            "password",
-            "Mike",
-            "B",
-            "mbarbzzz@jmail.com",
-            Instant.now(),
-            "Boston",
-            "USA",
-            Gender.MALE,
-            "Hi", "https://imgur.com/a/qKEjLCD",
-            true);
+        "password",
+        "Mike",
+        "B",
+        "mbarbzzz@jmail.com",
+        Instant.now(),
+        "Boston",
+        "USA",
+        Gender.MALE,
+        "Hi", "https://imgur.com/a/qKEjLCD",
+        true);
 
     ApplicationUser mTwo = new ApplicationUser("mikey",
-            "secure password",
-            "Mikey",
-            "Boz",
-            "ye@me.you",
-            Instant.now(),
-            "somewhere",
-            "eartch",
-            Gender.MALE,
-            "Heyo", "image.im",
-            true);
+        "secure password",
+        "Mikey",
+        "Boz",
+        "ye@me.you",
+        Instant.now(),
+        "somewhere",
+        "eartch",
+        Gender.MALE,
+        "Heyo", "image.im",
+        true);
 
     Post p = new Post("Hi",
-            "www.link.le",
-            "Boston",
-            "USA",
-            Instant.now(),
-            new HashSet<>(),
-            new HashSet<>(),
-            new HashSet<>());
+        "www.link.le",
+        "Boston",
+        "USA",
+        Instant.now(),
+        new HashSet<>(),
+        new HashSet<>(),
+        new HashSet<>());
 
     Post pTwo = new Post("Hi again",
-            "www.link2.le",
-            "Boston",
-            "USA",
-            Instant.now(),
-            new HashSet<>(),
-            new HashSet<>(),
-            new HashSet<>());
+        "www.link2.le",
+        "Boston",
+        "USA",
+        Instant.now(),
+        new HashSet<>(),
+        new HashSet<>(),
+        new HashSet<>());
 
     pThree = new Post("mbarbzzz first Post",
-            "www.link.le",
-            "Boston",
-            "USA",
-            Instant.now(),
-            new HashSet<>(),
-            new HashSet<>(),
-            new HashSet<>());
+        "www.link.le",
+        "Boston",
+        "USA",
+        Instant.now(),
+        new HashSet<>(),
+        new HashSet<>(),
+        new HashSet<>());
 
     applicationUserController.signUp(m);
     applicationUserController.signUp(mTwo);
@@ -133,27 +139,27 @@ public class DatabaseLoader implements CommandLineRunner {
 
   void createRandomUser(String firstName, String lastName, String city, String country, String biography) {
     ApplicationUser newUser = new ApplicationUser(
-            firstName + "_" + new Random().nextInt(10000),
-            generateRandomString("!.1"),
-            firstName,
-            lastName,
-            firstName + lastName + "_" + new Random().nextInt(10000) + "@jmail.com",
-            Instant.ofEpochSecond(new Random().nextInt()),
-            city,
-            country,
-            Gender.OTHER,
-            biography,
-            generateRandomString("profilePic:"),
-            generateRandomBoolean()
+        firstName + "_" + new Random().nextInt(10000),
+        generateRandomString("!.1"),
+        firstName,
+        lastName,
+        firstName + lastName + "_" + new Random().nextInt(10000) + "@jmail.com",
+        Instant.ofEpochSecond(new Random().nextInt()),
+        city,
+        country,
+        Gender.OTHER,
+        biography,
+        generateRandomString("profilePic:"),
+        generateRandomBoolean()
     );
     applicationUserController.signUp(newUser);
 
     Post newPost = new Post(biography,
-            generateRandomString("imageURL:"),
-            city,
-            country,
-            Instant.ofEpochSecond(new Random().nextInt()),
-            newUser);
+        generateRandomString("imageURL:"),
+        city,
+        country,
+        Instant.ofEpochSecond(new Random().nextInt()),
+        newUser);
 
     // postRepository.save(newPost);
     postController.newPost(new MockAuthentication(newUser), newPost);

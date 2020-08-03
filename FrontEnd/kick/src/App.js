@@ -52,7 +52,11 @@ class App extends Component {
     console.log("logged in", this.props.loggedIn);
     return (
       <Router>
-        {this.props.loggedIn ? <NavigationBar /> : <div></div>}
+        {this.props.loggedIn ? (
+          <NavigationBar meUser={this.state.user} />
+        ) : (
+          <div></div>
+        )}
         <Switch>
           <PrivateRoute
             path="/"
