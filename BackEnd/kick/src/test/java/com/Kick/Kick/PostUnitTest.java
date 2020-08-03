@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Random;
 
 import javax.transaction.Transactional;
 
@@ -247,7 +248,7 @@ public class PostUnitTest {
   @Test
   @Transactional
   void testNewPost() {
-    Post newPost = new Post("new post", "www.com", "b", "World", "2020-10-10");
+    Post newPost = new Post("new post", "www.com", "b", "World", Instant.ofEpochSecond(new Random().nextInt()));
 
     ResponseEntity success = postController.newPost(new MockAuthentication(m), newPost);
     assertEquals(HttpStatus.OK, success.getStatusCode());

@@ -73,7 +73,7 @@ public class ApplicationUserController extends Controller {
       selfFollowing.setAccepted(true);
       applicationUserRepository.save(user);
       followingRepository.save(selfFollowing);
-      return ResponseEntity.ok(user);
+      return ResponseEntity.ok("Registration successful");
     }
   }
 
@@ -124,6 +124,34 @@ public class ApplicationUserController extends Controller {
       } else {
         return ResponseEntity.ok(searchUser.generatePubliclyVisibleUser());
       }
+
+    } else {
+      return handleNotFound(username);
+    }
+  }
+
+  @GetMapping("/api/applicationUsers/followingCount/{username}")
+  public ResponseEntity getApplicationUserFollowingCount(@PathVariable @NonNull String username) {
+    Optional<ApplicationUser> maybeSearchUser = applicationUserRepository.findByUsername(username);
+
+    if (maybeSearchUser.isPresent()) {
+      ApplicationUser searchUser = maybeSearchUser.get();
+
+      return ResponseEntity.ok((int) searchUser.getWhereIsInfluencer().stream().filter(Following::isAccepted).count());
+
+    } else {
+      return handleNotFound(username);
+    }
+  }
+
+  @GetMapping("/api/applicationUsers/influencerCount/{username}")
+  public ResponseEntity getApplicationUserInfluencerCount(@PathVariable @NonNull String username) {
+    Optional<ApplicationUser> maybeSearchUser = applicationUserRepository.findByUsername(username);
+
+    if (maybeSearchUser.isPresent()) {
+      ApplicationUser searchUser = maybeSearchUser.get();
+
+      return ResponseEntity.ok((int) searchUser.getWhereIsFollower().stream().filter(Following::isAccepted).count());
 
     } else {
       return handleNotFound(username);

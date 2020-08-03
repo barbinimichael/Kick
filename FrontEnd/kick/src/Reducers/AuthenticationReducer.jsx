@@ -4,28 +4,115 @@ import {
   LOGGING_IN,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
+  LOGIN_RESET,
+  REGISTERING,
+  REGISTER_SUCCESSFUL,
+  REGISTER_FAIL_USERNAME,
+  REGISTER_FAIL_EMAIL,
+  REGISTER_FAIL,
+  REGISTER_RESET,
 } from "../Actions/AuthenticationAction";
 
 const AuthenciationReduer = (
-  state = { loggedIn: false, loggingIn: false, error: false },
+  state = {
+    loggingIn: false,
+    loggedIn: false,
+    error: false,
+    registering: false,
+    registered: false,
+    errorUsername: false,
+    errorEmail: false,
+    errorRegister: false,
+  },
   action
 ) => {
   switch (action.type) {
+    case REGISTER_RESET:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: false,
+      };
+      break;
+
+    case REGISTER_FAIL:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: true,
+      };
+      break;
+
+    case REGISTER_FAIL_USERNAME:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: true,
+        errorEmail: false,
+      };
+      break;
+
+    case REGISTER_FAIL_EMAIL:
+      state = {
+        ...state,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: true,
+      };
+      break;
+
+    case REGISTERING:
+      state = {
+        ...state,
+        registering: true,
+        registered: false,
+      };
+      break;
+
+    case REGISTER_SUCCESSFUL:
+      state = {
+        ...state,
+        registering: false,
+        registered: true,
+        errorUsername: false,
+        errorEmail: false,
+      };
+      break;
+
     case LOGOUT:
-      console.log("user reducer, called LOGOUT");
       state = {
         ...state,
         loggingIn: false,
         loggedIn: false,
         error: false,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
       };
       localStorage.removeItem("user");
       localStorage.removeItem("Authorization");
       history.push("/sign-in");
       break;
 
+    case LOGIN_RESET:
+      state = {
+        ...state,
+        loggingIn: false,
+        loggedIn: false,
+        error: false,
+      };
+      break;
+
     case LOGGING_IN:
-      console.log("user reducer, called LOGGING IN");
       state = {
         ...state,
         loggingIn: true,
@@ -35,17 +122,20 @@ const AuthenciationReduer = (
       break;
 
     case LOGIN_SUCCESS:
-      console.log("user reducer, called LOGIN SUCCESS");
       state = {
         ...state,
         loggingIn: false,
         loggedIn: true,
         error: false,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: false,
       };
       break;
 
     case LOGIN_FAIL:
-      console.log("user reducer, called LOGIN FAIL");
       state = {
         ...state,
         loggingIn: false,
@@ -55,13 +145,17 @@ const AuthenciationReduer = (
       break;
 
     default:
-      console.log("authentication reducer, reached default case");
       state = {
-        ...state,
         loggingIn: false,
-        loggedIn: true,
+        loggedIn: false,
         error: false,
+        registering: false,
+        registered: false,
+        errorUsername: false,
+        errorEmail: false,
+        errorRegister: false,
       };
+      break;
   }
 
   return state;

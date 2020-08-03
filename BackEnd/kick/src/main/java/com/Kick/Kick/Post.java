@@ -59,7 +59,7 @@ public class Post {
               String imageURL,
               String city,
               String country,
-              String postDate) {
+              Instant postDate) {
     this(caption,
         imageURL,
         city,
@@ -72,14 +72,13 @@ public class Post {
               String imageURL,
               String city,
               String country,
-              String postDate,
+              Instant postDate,
               ApplicationUser user) {
     this(caption,
         imageURL,
         city,
         country,
-        LocalDate.parse(
-            postDate).atStartOfDay(ZoneId.of("UTC")).toInstant(),
+        postDate,
         new HashSet<>(),
         new HashSet<>(),
         new HashSet<>(),

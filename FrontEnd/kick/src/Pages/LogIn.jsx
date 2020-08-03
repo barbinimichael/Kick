@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Form, Button, Nav } from "react-bootstrap";
+import { Form, Button, Nav, Alert } from "react-bootstrap";
+import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
-import { login } from "../Actions/AuthenticationAction";
+
+import { login, resetRegistration } from "../Actions/AuthenticationAction";
 
 class SignIn extends Component {
-  state = { username: "", password: "", failed: false };
+  state = { username: "", password: "" };
 
   constructor(props) {
     super(props);
@@ -16,8 +18,6 @@ class SignIn extends Component {
 
   async handleAuthentication(e) {
     e.preventDefault();
-    console.log("username", this.state.username);
-    console.log("username", this.state.password);
     this.props.login(this.state.username, this.state.password);
   }
 
@@ -28,51 +28,78 @@ class SignIn extends Component {
     });
   }
 
+  componentDidMount() {
+    if (!this.props.registered) {
+      this.props.resetRegistration();
+    }
+  }
+
   render() {
     return (
       <Page
         middleComponent={
           <React.Fragment>
-            <Form>
-              <Form.Group controlId="formBasicUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="username"
-                  placeholder="Enter username"
-                  onChange={this.handleChange}
-                  name="username"
-                />
-              </Form.Group>
+            <img
+              src={speaker}
+              width="30"
+              height="30"
+              className="align-baseline"
+              alt="Kick logo"
+            />{" "}
+            <span className="large-text">Kick</span>
+            <p className="italic">
+              <small>Make sharing easier</small>
+            </p>
+            <div className="sign-in-border">
+              <Form>
+                <Form.Group>
+                  {this.props.registered ? (
+                    <Alert variant="success">
+                      Registration successful, login!
+                    </Alert>
+                  ) : (
+                    <React.Fragment></React.Fragment>
+                  )}
+                </Form.Group>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Control
+                    type="username"
+                    placeholder="Username"
+                    onChange={this.handleChange}
+                    name="username"
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  onChange={this.handleChange}
-                  name="password"
-                />
-              </Form.Group>
-              {this.state.failed === true ? (
-                <Form.Text className="text-muted">
-                  The username or password you provided was incorrect
-                </Form.Text>
-              ) : (
-                <React.Fragment />
-              )}
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={this.handleAuthentication}
-              >
-                Submit
-              </Button>
-            </Form>
-
-            <Nav className="justify-content-center" activeKey="/home">
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    onChange={this.handleChange}
+                    name="password"
+                  />
+                </Form.Group>
+                <Form.Group controlId="formErrorNotification">
+                  {this.props.error === true ? (
+                    <Form.Text className="text-muted">
+                      The username or password you provided was incorrect
+                    </Form.Text>
+                  ) : (
+                    <React.Fragment />
+                  )}
+                </Form.Group>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={this.handleAuthentication}
+                >
+                  Submit
+                </Button>
+              </Form>
+            </div>
+            <Nav className="justify-content-center" activeKey="/register">
               <Nav.Item>
                 <Nav.Link href="/register">
-                  Don't have an account? Create one
+                  Don't have an account? Create one!
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -86,11 +113,14 @@ class SignIn extends Component {
 const mapStateToProps = (state) => {
   return {
     loggedIn: state.loggedIn,
+    error: state.error,
+    registered: state.registered,
   };
 };
 
 const mapDispatchToProps = {
   login,
+  resetRegistration,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

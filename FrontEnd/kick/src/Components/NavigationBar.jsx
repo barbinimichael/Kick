@@ -1,22 +1,27 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
+import speaker from "bootstrap-icons/icons/speaker.svg";
 import { Navbar, Nav, Button } from "react-bootstrap";
-
+import { connect } from "react-redux";
 import personCircle from "bootstrap-icons/icons/person-circle.svg";
-import logo from "../logo.svg";
+import gear from "bootstrap-icons/icons/gear-fill.svg";
+
 import { logout } from "../Actions/AuthenticationAction";
 
 class NavigationBar extends Component {
+  handleSignOut = () => {
+    this.props.logout();
+  };
+
   render() {
     return (
       <Navbar bg="light" expand="lg" fixed="top">
         <Navbar.Brand href="/">
           <img
-            src={logo}
+            src={speaker}
             width="30"
             height="30"
             className="d-inline-block align-top"
-            alt="React Bootstrap logo"
+            alt="Kick logo"
           />{" "}
           Kick
         </Navbar.Brand>
@@ -42,7 +47,16 @@ class NavigationBar extends Component {
                 width="30"
                 height="30"
                 className="d-inline-block align-top"
-                alt="React Bootstrap logo"
+                alt="User profile"
+              />
+            </Navbar.Brand>
+            <Navbar.Brand href="/settings">
+              <img
+                src={gear}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+                alt="Settings"
               />
             </Navbar.Brand>
             <Button onClick={this.props.logout}>Sign Out</Button>

@@ -9,7 +9,7 @@ class FollowersPage extends Component {
       <Page
         middleComponent={
           <UserFeed
-            feedURL={`/api/followings/followers/${this.props.match.params.username}`}
+            feedURL={`/api/followings/followers/${this.props.match.params.username}?`}
             meUser={this.props.meUser}
           />
         }

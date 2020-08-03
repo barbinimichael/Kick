@@ -15,11 +15,47 @@ import logo from "../logo.svg";
 import API from "../api/api";
 
 class UserCard extends Component {
-  state = { following: "not following" };
+  state = { following: "not following", influencerCount: 0, followingCount: 0 };
 
-  componentDidMount() {
+  componentWillMount() {
     this.checkFollowing();
+    this.checkFollowerCount();
+    this.checkInfluencerCount();
   }
+
+  componentDidUpdate(props) {
+    if (this.props !== props) {
+      this.checkFollowing();
+      this.checkFollowerCount();
+      this.checkInfluencerCount();
+    }
+  }
+
+  checkFollowerCount = () => {
+    API({
+      method: "get",
+      url: `/api/applicationUsers/followingCount/${this.props.user.username}`,
+    })
+      .then((response) => {
+        this.setState({ followingCount: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  checkInfluencerCount = () => {
+    API({
+      method: "get",
+      url: `/api/applicationUsers/influencerCount/${this.props.user.username}`,
+    })
+      .then((response) => {
+        this.setState({ influencerCount: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   checkFollowing = () => {
     API({
@@ -27,7 +63,6 @@ class UserCard extends Component {
       url: `/api/followings/check/${this.props.user.username}`,
     })
       .then((response) => {
-        console.log("Following", response);
         this.setState({ following: response.data });
       })
       .catch((error) => {
@@ -77,7 +112,11 @@ class UserCard extends Component {
         </Button>
       );
     } else if (this.state.following === "requested following") {
-      return <Badge pill>Requested</Badge>;
+      return (
+        <Button className="mb-0" onClick={this.handleDeleteFollow} size="sm">
+          Cancel follow request
+        </Button>
+      );
     } else {
       return (
         <Button onClick={this.handleFollow} size="sm">
@@ -85,18 +124,6 @@ class UserCard extends Component {
         </Button>
       );
     }
-  };
-
-  checkActualFollowerCount = (followers) => {
-    let count = 0;
-
-    followers.map((follower) => {
-      if (follower.accepted) {
-        count++;
-      }
-    });
-
-    return count;
   };
 
   render() {
@@ -107,8 +134,6 @@ class UserCard extends Component {
     ) {
       followerWord = "Follower";
     }
-
-    console.log("User card", this.props.user);
 
     return (
       <Jumbotron>
@@ -142,27 +167,27 @@ class UserCard extends Component {
         <Container>
           <Row>
             <Col align="right">
-              {this.props.user.whereIsInfluencer ? (
+              {this.state.following === "following" &&
+              this.props.user.whereIsInfluencer ? (
                 <Link to={`/followers/${this.props.user.username}`}>
-                  {this.checkActualFollowerCount(
-                    this.props.user.whereIsInfluencer
-                  )}{" "}
-                  {followerWord}
+                  {this.state.followingCount} {followerWord}
                 </Link>
               ) : (
-                "0 Followers"
+                <React.Fragment>
+                  {this.state.followingCount} {followerWord}
+                </React.Fragment>
               )}
             </Col>
             <Col align="left">
-              {this.props.user.whereIsFollower ? (
+              {this.state.following === "following" &&
+              this.props.user.whereIsFollower ? (
                 <Link to={`/influencers/${this.props.user.username}`}>
-                  {this.checkActualFollowerCount(
-                    this.props.user.whereIsFollower
-                  )}{" "}
-                  Following
+                  {this.state.influencerCount} Following
                 </Link>
               ) : (
-                "0 Following"
+                <React.Fragment>
+                  {this.state.influencerCount} Following
+                </React.Fragment>
               )}
             </Col>
           </Row>

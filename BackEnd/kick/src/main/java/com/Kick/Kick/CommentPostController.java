@@ -62,7 +62,6 @@ public class CommentPostController extends Controller {
         CommentPost commentPost = new CommentPost(user, post, comment);
         commentPostRepository.save(commentPost);
         post.addComment(commentPost);
-        postRepository.save(post);
         return ResponseEntity.ok(post);
 
       } else {
@@ -75,10 +74,11 @@ public class CommentPostController extends Controller {
   }
 
   @PutMapping("/api/commentPosts/{id}")
-  public ResponseEntity editComment(@AuthenticationPrincipal ApplicationUser user, @PathVariable @NonNull Long id, @RequestBody String comment) {
+  public ResponseEntity editComment(Authentication authentication, @PathVariable @NonNull Long id, @RequestBody String comment) {
       Optional<CommentPost> maybeCommentPost =  commentPostRepository.findById(id);
 
       if (maybeCommentPost.isPresent()) {
+        ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
         CommentPost commentPost = maybeCommentPost.get();
         ApplicationUser postUser = commentPost.getUser();
 
@@ -96,14 +96,15 @@ public class CommentPostController extends Controller {
   }
 
   @DeleteMapping("/api/commentPosts/{id}")
-  public ResponseEntity deleteComment(@AuthenticationPrincipal ApplicationUser user, @PathVariable @NonNull Long id) {
+  public ResponseEntity deleteComment(Authentication authentication, @PathVariable @NonNull Long id) {
       Optional<CommentPost> maybeCommentPost =  commentPostRepository.findById(id);
 
       if (maybeCommentPost.isPresent()) {
+        ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
         CommentPost commentPost = maybeCommentPost.get();
 
         if (commentPost.getUser().equals(user)) {
-          commentPostRepository.delete(commentPost);
+          commentPostRepository.deleteById(id);
           return handleSuccess("Deleted following successfully");
 
         } else {

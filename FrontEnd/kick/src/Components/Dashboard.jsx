@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LikeNotification from "./LikeNotification";
 import FollowingNotification from "./FollowingNotification";
+
 class Dashboard extends Component {
   state = { likeNotifications: [], followingNotifications: [] };
 
@@ -15,6 +16,13 @@ class Dashboard extends Component {
   }
 
   createNotifications = () => {
+    if (
+      this.state.likeNotifications.length === 0 &&
+      this.state.followingNotifications.length === 0
+    ) {
+      return <div className="center">No Notifications</div>;
+    }
+
     let likeNotifications = this.state.likeNotifications.map(
       (notification, index) => (
         <LikeNotification key={index} notification={notification} />
@@ -47,7 +55,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="sticky-top overflow-auto">
-        <h1>Dashboard</h1>
+        <h3 className="center">Notifications</h3>
         {this.createNotifications()}
       </div>
     );

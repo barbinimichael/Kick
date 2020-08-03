@@ -12,7 +12,7 @@ class Home extends Component {
           <Row>
             <Col lg="3"></Col>
             <Col lg="6">
-              <Feed feedURL="api/posts/feed" />
+              <Feed feedURL="api/posts/feed?" />
             </Col>
             <Col lg="3" className="Sidebar sticky-top">
               <Dashboard meUser={this.props.meUser} />

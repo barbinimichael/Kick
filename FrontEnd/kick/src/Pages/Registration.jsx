@@ -1,82 +1,246 @@
 import React, { Component } from "react";
-
-import { Form, Button, Col } from "react-bootstrap";
+import { Form, Button, Col, Nav, Alert } from "react-bootstrap";
+import { connect } from "react-redux";
+import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
-import history from "../Components/History";
+import { register, resetLogin } from "../Actions/AuthenticationAction";
+import { checkEmail, checkPassword } from "../Components/CheckValidInput";
 
 class Registration extends Component {
-  state = {};
-
-  handleRegistration = () => {
-    localStorage.setItem("user", "username");
-    localStorage.setItem("Authorization", "password");
-    history.push("/");
+  state = {
+    username: "",
+    password: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    city: "",
+    country: "",
+    privateProfile: false,
+    error: false,
+    missingValue: "",
   };
+
+  handleRegistration = (evt) => {
+    evt.preventDefault();
+    let data = { ...this.state };
+    delete data.error;
+    delete data.missingValue;
+
+    let missingValue = checkEmail(data.email);
+    if (missingValue !== "") {
+      this.setState({ missingValue });
+      return;
+    }
+
+    missingValue = checkPassword(data.password);
+    if (missingValue !== "") {
+      this.setState({ missingValue });
+      return;
+    }
+
+    // check no missing fields
+    for (const property in data) {
+      if (data[property] === "") {
+        this.setState({ missingValue: property });
+        return;
+      }
+    }
+
+    console.log("missing value", this.state.missingValue);
+
+    this.props.register(data);
+  };
+
+  handleChange = (evt) => {
+    const value = evt.target.value;
+    this.setState({
+      [evt.target.name]: value,
+    });
+  };
+
+  handleChecked = (evt) => {
+    const value = evt.target.checked;
+    this.setState({
+      [evt.target.name]: value,
+    });
+  };
+
+  componentDidMount() {
+    this.props.resetLogin();
+  }
 
   render() {
     return (
       <Page
         middleComponent={
-          <Form>
-            <Form.Row>
-              <Form.Group as={Col} controlId="formGridEmail">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" />
-              </Form.Group>
+          <React.Fragment>
+            <img
+              src={speaker}
+              width="30"
+              height="30"
+              className="align-baseline"
+              alt="Kick logo"
+            />{" "}
+            <span className="large-text">Kick</span>
+            <div className="sign-in-border">
+              <Form>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridUsername">
+                    <Form.Control
+                      type="username"
+                      placeholder="Username"
+                      onChange={this.handleChange}
+                      name="username"
+                    />
+                  </Form.Group>
+                </Form.Row>
 
-              <Form.Group as={Col} controlId="formGridPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
-              </Form.Group>
-            </Form.Row>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridPassword">
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      onChange={this.handleChange}
+                      name="password"
+                    />
+                    <Form.Text className="text-muted">
+                      Password must be 8-20 characters. Include numbers,
+                      letters, and special characters.
+                    </Form.Text>
+                  </Form.Group>
+                </Form.Row>
 
-            <Form.Group controlId="formGridAddress1">
-              <Form.Label>Address</Form.Label>
-              <Form.Control placeholder="1234 Main St" />
-            </Form.Group>
+                {this.props.errorUsername ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0">
+                      This username has already been chosen
+                    </p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
 
-            <Form.Group controlId="formGridAddress2">
-              <Form.Label>Address 2</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridEmail">
+                    <Form.Control
+                      type="email"
+                      placeholder="Email"
+                      onChange={this.handleChange}
+                      name="email"
+                    />
+                  </Form.Group>
+                </Form.Row>
 
-            <Form.Row>
-              <Form.Group as={Col} controlId="formGridCity">
-                <Form.Label>City</Form.Label>
-                <Form.Control />
-              </Form.Group>
+                {this.props.errorEmail ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0">
+                      This email has already been associated with an account
+                    </p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
 
-              <Form.Group as={Col} controlId="formGridState">
-                <Form.Label>State</Form.Label>
-                <Form.Control as="select" value="Choose...">
-                  <option>Choose...</option>
-                  <option>...</option>
-                </Form.Control>
-              </Form.Group>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridFirstName">
+                    <Form.Control
+                      type="firstName"
+                      placeholder="First name"
+                      onChange={this.handleChange}
+                      name="firstName"
+                    />
+                  </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Zip</Form.Label>
-                <Form.Control />
-              </Form.Group>
-            </Form.Row>
+                  <Form.Group as={Col} controlId="formGridLastName">
+                    <Form.Control
+                      type="lastName"
+                      placeholder="Last name"
+                      onChange={this.handleChange}
+                      name="lastName"
+                    />
+                  </Form.Group>
+                </Form.Row>
 
-            <Form.Group id="formGridCheckbox">
-              <Form.Check type="checkbox" label="Check me out" />
-            </Form.Group>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridCity">
+                    <Form.Control
+                      type="city"
+                      placeholder="City"
+                      onChange={this.handleChange}
+                      name="city"
+                    />
+                  </Form.Group>
 
-            <Button
-              variant="primary"
-              type="submit"
-              onClick={this.handleRegistration}
-            >
-              Submit
-            </Button>
-          </Form>
+                  <Form.Group as={Col} controlId="formGridCountry">
+                    <Form.Control
+                      type="country"
+                      placeholder="Country"
+                      onChange={this.handleChange}
+                      name="country"
+                    />
+                  </Form.Group>
+                </Form.Row>
+
+                <Form.Group id="formGridPrivate">
+                  <Form.Check
+                    type="checkbox"
+                    label="Set privateProfile account"
+                    onChange={this.handleChecked}
+                    name="privateProfile"
+                  />
+                </Form.Group>
+
+                {this.props.errorRegister ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0 center">An error has occurred</p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
+
+                {this.state.missingValue ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0 center">
+                      {this.state.missingValue} is required
+                    </p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={this.handleRegistration}
+                >
+                  Register!
+                </Button>
+              </Form>
+            </div>
+            <Nav className="justify-content-center" activeKey="/sign-in">
+              <Nav.Item>
+                <Nav.Link href="/sign-in">Already an account? Log in!</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </React.Fragment>
         }
       />
     );
   }
 }
 
-export default Registration;
+const mapStateToProps = (state) => {
+  return {
+    errorRegister: state.errorRegister,
+    errorUsername: state.errorUsername,
+    errorEmail: state.errorEmail,
+  };
+};
+
+const mapDispatchToProps = {
+  register,
+  resetLogin,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);

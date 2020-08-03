@@ -24,6 +24,8 @@ public class CommentPost {
   @JsonBackReference
   private ApplicationUser user;
 
+  private String username;
+
   @ManyToOne()
   @JoinColumn(name = "post_id")
   @JsonBackReference(value="post-comment_post")
@@ -39,6 +41,7 @@ public class CommentPost {
     this.user = user;
     this.post = post;
     this.comment = comment;
+    this.username = user.getUsername();
   }
 
   public Long getId() {
@@ -71,6 +74,14 @@ public class CommentPost {
 
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   @Override

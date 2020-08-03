@@ -10,20 +10,17 @@ class UserPage extends Component {
   state = { user: [] };
 
   componentDidMount() {
-    if (this.props.match.params.username !== "me") {
-      API({
-        method: "get",
-        url: `/api/applicationUsers/username/${this.props.match.params.username}`,
+    API({
+      method: "get",
+      url: `/api/applicationUsers/username/${this.props.match.params.username}`,
+    })
+      .then((response) => {
+        console.log("user profile fetch", response);
+        this.setState({ user: response.data });
       })
-        .then((response) => {
-          console.log("user profile fetch", response);
-          let user = response.data;
-          this.setState({ user });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -31,26 +28,18 @@ class UserPage extends Component {
       <Page
         middleComponent={
           <React.Fragment>
-            {this.props.match.params.username === "me" ? (
-              <React.Fragment>
-                <UserCard user={this.props.meUser} />
-                <Feed
-                  feedURL={"/api/posts/user/" + this.props.meUser.username}
-                />
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <UserCard
-                  user={this.state.user}
-                  meUsername={this.props.meUser.username}
-                />
-                <Feed
-                  feedURL={
-                    "/api/posts/user/" + this.props.match.params.username
-                  }
-                />
-              </React.Fragment>
-            )}
+            <UserCard
+              user={this.state.user}
+              meUsername={this.props.meUser.username}
+            />
+            <Feed
+              feedURL={
+                "/api/posts/user/" + this.props.match.params.username + "?"
+              }
+              myPosts={
+                this.props.match.params.username === this.props.meUser.username
+              }
+            />
           </React.Fragment>
         }
       />

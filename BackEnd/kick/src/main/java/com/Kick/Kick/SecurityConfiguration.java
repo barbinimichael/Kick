@@ -26,8 +26,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Autowired
   public SecurityConfiguration(ApplicationUserDetailsServiceImpl userDetailsService,
-                               BCryptPasswordEncoder bCryptPasswordEncoder,
-                               ApplicationUserRepository applicationUserRepository) {
+      BCryptPasswordEncoder bCryptPasswordEncoder, ApplicationUserRepository applicationUserRepository) {
     this.userDetailsService = userDetailsService;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     this.applicationUserRepository = applicationUserRepository;
@@ -41,12 +40,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .requiresSecure().and()
         .cors().and().csrf().disable().authorizeRequests()
         // .anyRequest().permitAll()
-        .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL,
-            SIGN_IN_URL).permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .addFilter(new JWTAuthenticationFilter(authenticationManager(),
-            this.applicationUserRepository))
+        .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL, SIGN_IN_URL).permitAll()
+        .anyRequest().authenticated().and()
+        .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.applicationUserRepository))
         .addFilter(new JWTAuthorizationFilter(authenticationManager()))
         // this disables session creation on Spring Security
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

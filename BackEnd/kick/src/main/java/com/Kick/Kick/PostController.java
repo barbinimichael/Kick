@@ -2,6 +2,8 @@ package com.Kick.Kick;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -24,13 +26,15 @@ public class PostController extends Controller {
   private final PostRepository postRepository;
   private final ApplicationUserRepository applicationUserRepository;
   private final FollowingRepository followingRepository;
+  private final CommentPostRepository commentPostRepository;
 
   @Autowired
   public PostController(ApplicationUserRepository applicationUserRepository,
-                        PostRepository postRepository, FollowingRepository followingRepository) {
+                        PostRepository postRepository, FollowingRepository followingRepository, CommentPostRepository commentPostRepository) {
     this.applicationUserRepository = applicationUserRepository;
     this.postRepository = postRepository;
     this.followingRepository = followingRepository;
+    this.commentPostRepository = commentPostRepository;
   }
 
   @GetMapping("/api/posts/user/{username}")
@@ -55,6 +59,19 @@ public class PostController extends Controller {
 
   }
 
+  @GetMapping("/api/posts/explore")
+  public ResponseEntity getExplore(Pageable pageable) {
+    ArrayList<Post> randomPosts = new ArrayList<>();
+    int numEntries = pageable.getPageSize();
+    long repositorySize = postRepository.count();
+    for (int i = 0; i < numEntries; i++) {
+      int index = (int)(Math.random() * repositorySize);
+      Page<Post> post = postRepository.findAllByUserPrivateProfile(false, PageRequest.of(index, 1));
+      randomPosts.addAll(post.getContent());
+    }
+    return ResponseEntity.ok(new PageImpl<>(randomPosts));
+  }
+
   @GetMapping("/api/posts/feed")
   public ResponseEntity getFeed(Authentication authentication, Pageable pageable) {
     ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
@@ -65,11 +82,10 @@ public class PostController extends Controller {
         users.add(following.getInfluencer());
       }
     }
-    Page<Post> feed = postRepository.findByUserInOrderByTimeAsc(users, pageable);
+    Page<Post> feed = postRepository.findByUserInOrderByTimeDesc(users, pageable);
     return ResponseEntity.ok(feed);
   }
 
-  // page, size, sort
   @GetMapping("/api/posts/search")
   public ResponseEntity searchPost(Pageable pageable, @RequestParam("search") String search) {
     return ResponseEntity.ok(postRepository.findByAttributes(search, pageable));
@@ -86,6 +102,27 @@ public class PostController extends Controller {
 
       if (!post.getUser().isPrivateProfile() || postUser.equals(user) || checkFollowing(user, postUser)) {
         return ResponseEntity.ok(post);
+
+      } else {
+        return handleBadCredentials(user.getUsername());
+      }
+
+    } else {
+      return handleNotFound(String.valueOf(id));
+    }
+  }
+
+  @GetMapping("/api/posts/{id}/comments")
+  public ResponseEntity getPostComments(Authentication authentication, Pageable pageable, @PathVariable @NonNull long id) {
+    Optional<Post> maybePost = postRepository.findById(id);
+
+    if (maybePost.isPresent()) {
+      ApplicationUser user = applicationUserRepository.findByUsername(authentication.getName()).get();
+      Post post = maybePost.get();
+      ApplicationUser postUser = post.getUser();
+
+      if (!post.getUser().isPrivateProfile() || postUser.equals(user) || checkFollowing(user, postUser)) {
+        return ResponseEntity.ok(commentPostRepository.findAllByPost(post, pageable));
 
       } else {
         return handleBadCredentials(user.getUsername());
