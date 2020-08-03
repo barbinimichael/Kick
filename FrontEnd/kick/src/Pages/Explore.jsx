@@ -11,7 +11,7 @@ class Explore extends Component {
         middleComponent={
           <React.Fragment>
             <h1>Explore</h1>
-            <Feed feedURL="/api/posts/explore" />
+            <Feed feedURL="/api/posts/explore?" />
           </React.Fragment>
         }
       />

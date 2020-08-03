@@ -21,6 +21,7 @@ public class KickApplication {
 		SpringApplication.run(KickApplication.class, args);
 
 		logger.info("STARTED APPLICATION");
+		logger.info(System.getProperty("user.dir"));
 	}
 
 }

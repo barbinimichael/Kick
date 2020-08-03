@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LikeNotification from "./LikeNotification";
 import FollowingNotification from "./FollowingNotification";
+
 class Dashboard extends Component {
   state = { likeNotifications: [], followingNotifications: [] };
 

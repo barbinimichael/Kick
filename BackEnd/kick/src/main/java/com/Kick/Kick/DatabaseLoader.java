@@ -1,7 +1,5 @@
 package com.Kick.Kick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.Authentication;
@@ -10,10 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Responsible for loading example data into the database.
@@ -30,11 +25,16 @@ public class DatabaseLoader implements CommandLineRunner {
   private final PostController postController;
   private final LikeNotificationRepository likeNotificationRepository;
 
+  int numRandomGeneratedUsers = 100;
+  List<String> randomFirstNames;
+  List<String> randomLastNames;
+  List<String> randomCities;
+  List<String> randomCountries;
+  List<String> randomBiographies;
+
   private ArrayList<ApplicationUser> users = new ArrayList<>();
   private ApplicationUser m;
   private Post pThree;
-
-  private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
   @Autowired
   public DatabaseLoader(ApplicationUserRepository applicationUserRepository,
@@ -58,56 +58,62 @@ public class DatabaseLoader implements CommandLineRunner {
   @Transactional
   public void run(String... strings) throws Exception {
 
+    randomFirstNames = LoadData.getFirstNames(numRandomGeneratedUsers);
+    randomLastNames = LoadData.getLastNames(numRandomGeneratedUsers);
+    randomCities = LoadData.getCities(numRandomGeneratedUsers);
+    randomCountries = LoadData.getCountries(numRandomGeneratedUsers);
+    randomBiographies = LoadData.getBiographies(numRandomGeneratedUsers);
+
     m = new ApplicationUser("mbarbzzz",
-        "password",
-        "Mike",
-        "B",
-        "mbarbzzz@jmail.com",
-        Instant.now(),
-        "Boston",
-        "USA",
-        Gender.MALE,
-        "Hi", "https://imgur.com/a/qKEjLCD",
-        true);
+            "password",
+            "Mike",
+            "B",
+            "mbarbzzz@jmail.com",
+            Instant.now(),
+            "Boston",
+            "USA",
+            Gender.MALE,
+            "Hi", "https://imgur.com/a/qKEjLCD",
+            true);
 
     ApplicationUser mTwo = new ApplicationUser("mikey",
-        "secure password",
-        "Mikey",
-        "Boz",
-        "ye@me.you",
-        Instant.now(),
-        "somewhere",
-        "eartch",
-        Gender.MALE,
-        "Heyo", "image.im",
-        true);
+            "secure password",
+            "Mikey",
+            "Boz",
+            "ye@me.you",
+            Instant.now(),
+            "somewhere",
+            "eartch",
+            Gender.MALE,
+            "Heyo", "image.im",
+            true);
 
     Post p = new Post("Hi",
-        "www.link.le",
-        "Boston",
-        "USA",
-        Instant.now(),
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashSet<>());
+            "www.link.le",
+            "Boston",
+            "USA",
+            Instant.now(),
+            new HashSet<>(),
+            new HashSet<>(),
+            new HashSet<>());
 
     Post pTwo = new Post("Hi again",
-        "www.link2.le",
-        "Boston",
-        "USA",
-        Instant.now(),
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashSet<>());
+            "www.link2.le",
+            "Boston",
+            "USA",
+            Instant.now(),
+            new HashSet<>(),
+            new HashSet<>(),
+            new HashSet<>());
 
     pThree = new Post("mbarbzzz first Post",
-        "www.link.le",
-        "Boston",
-        "USA",
-        Instant.now(),
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashSet<>());
+            "www.link.le",
+            "Boston",
+            "USA",
+            Instant.now(),
+            new HashSet<>(),
+            new HashSet<>(),
+            new HashSet<>());
 
     applicationUserController.signUp(m);
     applicationUserController.signUp(mTwo);
@@ -120,60 +126,62 @@ public class DatabaseLoader implements CommandLineRunner {
 
     users.add(m);
 
-    for (int i = 0; i < 100; i++) {
-      createRandomUser();
+    for (int i = 0; i < numRandomGeneratedUsers; i++) {
+      createRandomUser(randomFirstNames.get(i), randomLastNames.get(i), randomCities.get(i), randomCountries.get(i), randomBiographies.get(i));
     }
   }
 
-  void createRandomUser() {
+  void createRandomUser(String firstName, String lastName, String city, String country, String biography) {
     ApplicationUser newUser = new ApplicationUser(
-        generateRandomString("username:"),
-        generateRandomString("password:"),
-        generateRandomString("firstName:"),
-        generateRandomString("lastName:"),
-        generateRandomString("email:"),
+            firstName + "_" + new Random().nextInt(10000),
+            generateRandomString("!.1"),
+            firstName,
+            lastName,
+            firstName + lastName + "_" + new Random().nextInt(10000) + "@jmail.com",
             Instant.ofEpochSecond(new Random().nextInt()),
-        generateRandomString("city:"),
-        generateRandomString("country:"),
-        Gender.OTHER,
-        generateRandomString("biography:"),
-        generateRandomString("profilePic:"),
-        generateRandomBoolean()
+            city,
+            country,
+            Gender.OTHER,
+            biography,
+            generateRandomString("profilePic:"),
+            generateRandomBoolean()
     );
     applicationUserController.signUp(newUser);
 
-    Post newPost = new Post(generateRandomString("caption:"),
-        generateRandomString("imageURL:"),
-        generateRandomString("city:"),
-        generateRandomString("country:"),
+    Post newPost = new Post(biography,
+            generateRandomString("imageURL:"),
+            city,
+            country,
             Instant.ofEpochSecond(new Random().nextInt()),
-        newUser);
+            newUser);
 
+    // postRepository.save(newPost);
     postController.newPost(new MockAuthentication(newUser), newPost);
-
+    // followingRepository.save(new Following(m, newUser));
     followingController.follow(new MockAuthentication(m), newUser.getUsername());
 
     // artificially insert accepted following since cannot do multiple transactions in a row before start
-     if (generateRandomBoolean()) {
-       Following newFollowing = new Following(newUser, m);
-       newFollowing.setAccepted(true);
-       m.addWhereIsInfluencer(newFollowing);
-       newUser.addWhereIsFollower(newFollowing);
+    if (generateRandomBoolean()) {
+      Following newFollowing = new Following(newUser, m);
+      newFollowing.setAccepted(true);
+      m.addWhereIsInfluencer(newFollowing);
+      newUser.addWhereIsFollower(newFollowing);
 
-       LikePost newLike = new LikePost(newUser, pThree);
-       pThree.addLike(newLike);
+      LikePost newLike = new LikePost(newUser, pThree);
+      pThree.addLike(newLike);
 
-       LikeNotification newLikeNotification = new LikeNotification(m, pThree, newUser.getUsername());
+      LikeNotification newLikeNotification = new LikeNotification(m, pThree, newUser.getUsername());
 
-       likeNotificationRepository.save(newLikeNotification);
-       likePostRepository.save(newLike);
-       postRepository.save(pThree);
-       followingRepository.save(newFollowing);
-       applicationUserRepository.save(m);
-       applicationUserRepository.save(newUser);
-     } else {
-       followingController.follow(new MockAuthentication(newUser), m.getUsername());
-     }
+      likeNotificationRepository.save(newLikeNotification);
+      likePostRepository.save(newLike);
+      postRepository.save(pThree);
+      followingRepository.save(newFollowing);
+      applicationUserRepository.save(m);
+      applicationUserRepository.save(newUser);
+    } else {
+      // followingRepository.save(new Following(newUser, m));
+      followingRepository.save(new Following(newUser, m));
+    }
 
     users.add(newUser);
   }

@@ -1,19 +1,34 @@
 import React, { Component } from "react";
+import { Spinner } from "react-bootstrap";
+
 import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  state = {
-    feed: [],
-    liked: [],
-    privateProfile: false,
-    page: -1,
-    totalPages: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      feed: [],
+      liked: [],
+      privateProfile: false,
+      page: 0,
+      totalPages: 1,
+    };
+    this.createFeed();
+  }
 
   componentDidUpdate(props) {
     if (this.props !== props) {
-      this.createFeed();
+      this.setState(
+        {
+          page: 0,
+          totalPages: 1,
+          feed: [],
+          liked: [],
+          privateProfile: false,
+        },
+        this.createFeed
+      );
     }
   }
 
@@ -22,17 +37,17 @@ class Feed extends Component {
     if (this.state.page >= this.state.totalPages) {
       return;
     }
-    this.setState({ page: this.state.page + 1 });
 
     API({
       method: "get",
-      url: this.props.feedURL + `?page=${this.state.page}&size=10`,
+      url: this.props.feedURL + `page=${this.state.page}&size=10`,
     })
       .then((response) => {
         console.log("create feed response", response);
         let feed = response.data.content;
         this.setState({ feed: this.state.feed.concat(feed) });
         this.setState({ totalPages: response.data.totalPages });
+        this.setState({ page: this.state.page + 1 });
 
         if (response.data === "Not following or public") {
           this.setState({ noPost: true });
@@ -140,9 +155,10 @@ class Feed extends Component {
   }
 
   render() {
+    console.log("Feed", this.state.feed);
     return (
       <div onScroll={this.handleScroll} id="feed">
-        {this.state.feed && this.state.feed.length > 0 ? (
+        {this.state.feed && this.state.feed[0] != undefined ? (
           this.state.feed.map((post, index) => (
             <Post
               key={post.id}
@@ -160,6 +176,20 @@ class Feed extends Component {
           <h1 className="center">No Posts</h1>
         ) : (
           <h1 className="center">Private profile</h1>
+        )}
+        {this.state.page < this.state.totalPages ? (
+          <div className="center">
+            <Spinner animation="border" variant="primary" />
+            <Spinner animation="border" variant="secondary" />
+            <Spinner animation="border" variant="success" />
+            <Spinner animation="border" variant="danger" />
+            <Spinner animation="border" variant="warning" />
+            <Spinner animation="border" variant="info" />
+            <Spinner animation="border" variant="light" />
+            <Spinner animation="border" variant="dark" />
+          </div>
+        ) : (
+          <React.Fragment></React.Fragment>
         )}
       </div>
     );

@@ -18,14 +18,16 @@ class Search extends Component {
     return "?search=" + search;
   };
 
-  onChange = (e) => this.setState({ [e.target.name]: e.target.value });
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   onRadioToggle = (e) => {
     this.setState({ selectedOption: e.target.value });
   };
 
   render() {
-    let { search } = this.state;
+    console.log("Search", this.state.search);
     return (
       <Page
         middleComponent={
@@ -34,11 +36,9 @@ class Search extends Component {
               <InputGroup className="mb-3">
                 <FormControl
                   placeholder="Search..."
-                  aria-label="Search..."
-                  aria-describedby="search"
                   name="search"
-                  value={search}
                   onChange={this.onChange}
+                  value={this.state.search}
                 />
               </InputGroup>
             </Row>
@@ -66,14 +66,16 @@ class Search extends Component {
             </Row>
             {(this.state.search !== "") &
             (this.state.selectedOption === "postToggle") ? (
-              <Feed feedURL={`/api/posts/search?search=${this.state.search}`} />
+              <Feed
+                feedURL={`/api/posts/search?search=${this.state.search}&`}
+              />
             ) : (
               <React.Fragment></React.Fragment>
             )}
             {(this.state.search !== "") &
             (this.state.selectedOption === "userToggle") ? (
               <UserFeed
-                feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*`}
+                feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*&`}
                 meUser={this.props.meUser}
               />
             ) : (

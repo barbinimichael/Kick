@@ -17,6 +17,12 @@ import API from "../api/api";
 class UserCard extends Component {
   state = { following: "not following", influencerCount: 0, followingCount: 0 };
 
+  componentWillMount() {
+    this.checkFollowing();
+    this.checkFollowerCount();
+    this.checkInfluencerCount();
+  }
+
   componentDidUpdate(props) {
     if (this.props !== props) {
       this.checkFollowing();
