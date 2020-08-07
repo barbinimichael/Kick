@@ -17,4 +17,5 @@ export const store = createStore(
   {},
   applyMiddleware(logger, thunk)
 );
+
 export const persistor = persistStore(store);

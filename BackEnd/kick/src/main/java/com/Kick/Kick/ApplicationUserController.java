@@ -37,6 +37,11 @@ public class ApplicationUserController extends Controller {
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
   }
 
+  @GetMapping("/api/applicationUsers/check")
+  public ResponseEntity<String> checkAuthentication(Authentication authentication) {
+    return ResponseEntity.ok("Authenticated");
+  }
+
   @GetMapping("/api/applicationUsers/search")
   public ResponseEntity findAllBySpecification(
       @RequestParam(value = "search") String search, Pageable pageable) {

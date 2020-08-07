@@ -29,6 +29,21 @@ class App extends Component {
   state = { user: [] };
 
   componentDidMount() {
+    console.log("React verion", React.version);
+    if (this.props.loggedIn === undefined) {
+      API({
+        method: "get",
+        url: "api/applicationUsers/check",
+      })
+        .then((response) => {
+          console.log("Authentication checked");
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("Could not check authentication");
+          this.props.logout();
+        });
+    }
     this.getUserInfo();
   }
 
@@ -43,13 +58,11 @@ class App extends Component {
         })
         .catch((error) => {
           console.log(error);
-          this.props.logout();
         });
     }
   };
 
   render() {
-    console.log("logged in", this.props.loggedIn);
     return (
       <Router>
         {this.props.loggedIn ? (
@@ -112,6 +125,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     loggedIn: state.loggedIn,
+    error: state.error,
   };
 };
 

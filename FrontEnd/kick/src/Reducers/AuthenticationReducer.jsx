@@ -13,19 +13,7 @@ import {
   REGISTER_RESET,
 } from "../Actions/AuthenticationAction";
 
-const AuthenciationReduer = (
-  state = {
-    loggingIn: false,
-    loggedIn: false,
-    error: false,
-    registering: false,
-    registered: false,
-    errorUsername: false,
-    errorEmail: false,
-    errorRegister: false,
-  },
-  action
-) => {
+const AuthenciationReduer = (state = { loggedIn: undefined }, action) => {
   switch (action.type) {
     case REGISTER_RESET:
       state = {
@@ -101,6 +89,7 @@ const AuthenciationReduer = (
       localStorage.removeItem("user");
       localStorage.removeItem("Authorization");
       history.push("/sign-in");
+      history.go(0);
       break;
 
     case LOGIN_RESET:
@@ -153,7 +142,6 @@ const AuthenciationReduer = (
         registered: false,
         errorUsername: false,
         errorEmail: false,
-        errorRegister: false,
       };
       break;
   }

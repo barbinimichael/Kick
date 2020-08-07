@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
+import API from "../api/api";
+import { useDispatch } from "react-redux";
+
+import { LOGOUT } from "../Actions/AuthenticationAction";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    API({
+      method: "get",
+      url: "api/applicationUsers/check",
+    })
+      .then(() => {})
+      .catch(() => {
+        dispatch({ type: LOGOUT });
+      });
+  });
+
   return (
     <Route
       {...rest}
