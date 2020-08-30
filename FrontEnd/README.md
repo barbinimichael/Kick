@@ -4,7 +4,7 @@ A single-page web application for user's to access the Kick Service.
 
 ## Deployment
 
-This project has been deployed at https://kick-a7a7f.web.app using FireBase.
+This project has been deployed at https://kick-share.com using FireBase.
 
 ## Technologies
 

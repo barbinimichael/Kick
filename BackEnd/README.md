@@ -4,7 +4,7 @@ The Kick API services the Kick Web Application.
 
 ## Deployment
 
-This project has been deployed at https://quiet-inlet-83310.herokuapp.com/ using Heroku. Configured with HTTPS encryption. It has a PostgreSQL database storing all data.
+This project has been deployed at https://api.kick-share.com using Route 53 and EC2 from Amazon Web Service. Configured with HTTPS encryption. It has a mySQL database storing all data.
 
 ## Technologies
 

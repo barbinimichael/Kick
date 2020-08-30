@@ -7,7 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,9 +37,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-        .requiresChannel()
-        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-        .requiresSecure().and()
+//        .requiresChannel()
+//        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+//        .requiresSecure().and()
         .cors().and().csrf().disable().authorizeRequests()
         // .anyRequest().permitAll()
         .antMatchers("/main.css", "/", "/index.html", "/built/bundle.js", SIGN_UP_URL, SIGN_IN_URL).permitAll()
@@ -59,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
     config.setAllowedMethods(Arrays.asList("GET", "PUT", "DELETE", "POST"));
     config.setExposedHeaders(List.of("Authorization"));
-    config.setAllowedOrigins(List.of("https://kick-a7a7f.web.app"));
+    config.setAllowedOrigins(List.of("https://kick-share.com"));
     source.registerCorsConfiguration("/**", config);
     return source;
   }

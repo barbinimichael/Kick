@@ -38,7 +38,7 @@ public class ApplicationUserController extends Controller {
   }
 
   @GetMapping("/api/applicationUsers/check")
-  public ResponseEntity<String> checkAuthentication(Authentication authentication) {
+  public ResponseEntity<String> checkAuthentication() {
     return ResponseEntity.ok("Authenticated");
   }
 
