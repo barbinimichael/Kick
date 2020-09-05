@@ -5,17 +5,13 @@ import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      feed: [],
-      liked: [],
-      privateProfile: false,
-      page: 0,
-      totalPages: 1,
-    };
-    this.createFeed();
-  }
+  state = {
+    feed: [],
+    liked: [],
+    privateProfile: false,
+    page: 0,
+    totalPages: 1,
+  };
 
   componentDidUpdate(props) {
     if (this.props !== props) {
@@ -157,7 +153,7 @@ class Feed extends Component {
     console.log("Feed", this.state.feed);
     return (
       <div onScroll={this.handleScroll} id="feed">
-        {this.state.feed && this.state.feed[0] != undefined ? (
+        {this.state.feed && this.state.feed[0] !== undefined ? (
           this.state.feed.map((post, index) => (
             <Post
               key={post.id}

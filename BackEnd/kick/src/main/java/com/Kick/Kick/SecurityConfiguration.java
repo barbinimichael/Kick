@@ -61,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
     config.setAllowedMethods(Arrays.asList("GET", "PUT", "DELETE", "POST"));
     config.setExposedHeaders(List.of("Authorization"));
-    config.setAllowedOrigins(List.of("https://kick-share.com"));
+    config.setAllowedOrigins(List.of("https://kick-share.com", "http://localhost:3000"));
     source.registerCorsConfiguration("/**", config);
     return source;
   }

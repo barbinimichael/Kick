@@ -8,7 +8,7 @@ class Page extends Component {
       <div>
         <Container fluid>
           <Row>
-            <Col lg="3"></Col>
+            <Col lg="3" className="Sidebar sticky-top"></Col>
             {this.props.leftComponent ? (
               this.props.leftComponent
             ) : (

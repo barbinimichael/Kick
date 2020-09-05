@@ -78,7 +78,12 @@ class App extends Component {
             meUser={this.state.user}
           />
           <PrivateRoute path="/create-post" exact component={CreatePost} />
-          <PrivateRoute path="/message" exact component={Message} />
+          <PrivateRoute
+            path="/message"
+            exact
+            component={Message}
+            meUser={this.state.user}
+          />
           <PrivateRoute path="/explore" exact component={Explore} />
           <PrivateRoute
             path="/search"

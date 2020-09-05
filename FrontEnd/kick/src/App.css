@@ -83,6 +83,14 @@
   text-align: center;
 }
 
+.right {
+  text-align: right;
+}
+
+.left {
+  text-align: left;
+}
+
 .space-evenly {
   display: flex;
   flex-direction: row;
