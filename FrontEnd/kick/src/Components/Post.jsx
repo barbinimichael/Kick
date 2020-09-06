@@ -71,7 +71,15 @@ class Post extends Component {
             <React.Fragment></React.Fragment>
           )}
         </Card.Header>
-        <Card.Img variant="top" src={logo} />
+        <Card.Img
+          variant="top"
+          src={this.props.post.imageURL}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = logo;
+          }}
+          alt="broken, reverting to default"
+        />
         <Card.Body>
           <Button variant="link" onClick={this.onLike}>
             {this.props.liked ? (

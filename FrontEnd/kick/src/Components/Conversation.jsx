@@ -1,80 +1,76 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Row, Col, Badge, Form, Button } from "react-bootstrap";
-import firebase from "../api/database";
 
 const Conversation = (props) => {
   const [messages, setMessages] = useState([]);
-  const [currentUser, setCurrentUser] = useState("");
-  const [newMessage, setNewMessage] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    if (props.db && props.currentId) {
-      console.log(props);
-      setCurrentUser(props.currentUser);
-      console.log("conversation currentId", props.currentId);
-      var currentMessages = [];
-      props.db
-        .collection("conversations")
-        .doc(props.currentId.toString())
-        .collection("messages")
-        .withConverter(messageConverter)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            currentMessages.push(doc.data());
-          });
-          setMessages(currentMessages);
-        });
+    if (!props.db || !props.currentId) {
+      return;
     }
-  }, [props]);
 
-  console.log("conversation messages", messages);
+    const unsubscribe = props.db
+      .collection("conversations")
+      .doc(props.currentId.toString())
+      .collection("messages")
+      .orderBy("time", "asc")
+      .withConverter(messageConverter)
+      .onSnapshot((querySnapshot) => {
+        var currentMessages = [];
+        querySnapshot.forEach(function (doc) {
+          currentMessages.push(doc.data());
+        });
+        setMessages(currentMessages);
+      });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [props.currentId, props.currentUser, props.db]);
 
   const handleSubmit = useCallback(
     (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       if (props.db) {
-        console.log("add conversation");
+        console.log("add message");
         props.db
           .collection("conversations")
           .doc(props.currentId.toString())
           .collection("messages")
           .add({
-            user: "mbarbzzz",
+            user: props.currentUser,
             message: newMessage,
             time: new Date(),
           });
+        setNewMessage("");
       }
     },
-    [props.db, props.currentId, newMessage]
+    [props.db, props.currentId, newMessage, props.currentUser]
   );
 
   return (
     <React.Fragment>
       <h1 className="center">Message</h1>
       <hr className="hr-line" />
-      {messages.map((message) => {
-        console.log("Current message user", currentUser);
-        console.log("Message user", message.user);
-        if (message.user === currentUser) {
-          return (
-            <h1 className="right" key={message.time}>
-              <Badge pill variant="primary">
-                {message.message}
-              </Badge>
-            </h1>
-          );
-        } else {
-          return (
-            <h1 className="left" key={message.time}>
-              <Badge pill variant="secondary">
-                {message.message}
-              </Badge>
-            </h1>
-          );
-        }
-      })}
-      <Form.Group>
+      <div className="extra-space Sidebar sticky-top wrap">
+        {messages.map((message) => {
+          if (message.user === props.currentUser) {
+            return (
+              <h1 key={message.time}>
+                <p className="speech-bubble">{message.message}</p>
+              </h1>
+            );
+          } else {
+            return (
+              <h1 className="left inline " key={message.time}>
+                <p className="gray-speech-bubble">{message.message}</p>
+              </h1>
+            );
+          }
+        })}
+      </div>
+      <Form.Group className="fixed-bottom">
         <Form.Row>
           <Col lg="9">
             <Form.Control
@@ -83,6 +79,7 @@ const Conversation = (props) => {
               onChange={(e) => {
                 setNewMessage(e.target.value);
               }}
+              value={newMessage}
             />
           </Col>
           <Col>

@@ -9,18 +9,20 @@ import API from "../api/api";
 class UserPage extends Component {
   state = { user: [] };
 
-  componentDidMount() {
-    API({
-      method: "get",
-      url: `/api/applicationUsers/username/${this.props.match.params.username}`,
-    })
-      .then((response) => {
-        console.log("user profile fetch", response);
-        this.setState({ user: response.data });
+  componentDidUpdate(props) {
+    if (this.props !== props) {
+      API({
+        method: "get",
+        url: `/api/applicationUsers/username/${this.props.match.params.username}`,
       })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((response) => {
+          console.log("user profile fetch", response);
+          this.setState({ user: response.data });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
   render() {
