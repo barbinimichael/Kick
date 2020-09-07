@@ -52,6 +52,7 @@ class Post extends Component {
   };
 
   render() {
+    const postDate = new Date(this.props.post.postDate);
     return (
       <Card>
         <Card.Header>
@@ -101,7 +102,11 @@ class Post extends Component {
           <Card.Subtitle className="mb-2 text-muted">
             {this.props.post.city}, {this.props.post.country}
           </Card.Subtitle>
-          <footer>{this.props.post.postDate}</footer>
+          <footer>
+            {postDate.toLocaleDateString() +
+              " " +
+              postDate.toLocaleTimeString()}
+          </footer>
         </Card.Body>
         <InputGroup className="mb-3">
           <FormControl

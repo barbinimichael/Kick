@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-class Time extends Component {
+export class Time extends Component {
   convertTime = (time) => {
-    let dif = Math.abs(time - new Date()) / 86400000;
+    let dif = Math.abs(new Date() - time) / 86400000;
 
     if (dif < 1) {
       return "Today";
@@ -16,4 +16,12 @@ class Time extends Component {
   }
 }
 
-export default Time;
+export const secondsToDate = (seconds) => {
+  const date = new Date(0);
+  date.setUTCSeconds(seconds);
+  if ((new Date() - date) / 86400000 < 1) {
+    return "Today, " + date.toLocaleTimeString();
+  } else {
+    return date.toLocaleDateString();
+  }
+};

@@ -17,7 +17,7 @@ import API from "../api/api";
 class UserCard extends Component {
   state = { following: "not following", influencerCount: 0, followingCount: 0 };
 
-  componentWillMount() {
+  componentDidMount() {
     this.checkFollowing();
     this.checkFollowerCount();
     this.checkInfluencerCount();
@@ -77,6 +77,8 @@ class UserCard extends Component {
     })
       .then(() => {
         this.checkFollowing();
+        this.checkFollowerCount();
+        this.checkInfluencerCount();
       })
       .catch((error) => {
         console.log(error);
@@ -90,6 +92,8 @@ class UserCard extends Component {
     })
       .then(() => {
         this.checkFollowing();
+        this.checkFollowerCount();
+        this.checkInfluencerCount();
       })
       .catch((error) => {
         console.log(error);
@@ -167,8 +171,9 @@ class UserCard extends Component {
         <Container>
           <Row>
             <Col align="right">
-              {this.state.following === "following" &&
-              this.props.user.whereIsInfluencer ? (
+              {(this.state.following === "following" &&
+                this.props.user.whereIsInfluencer) ||
+              !this.props.user.privateProfile ? (
                 <Link to={`/followers/${this.props.user.username}`}>
                   {this.state.followingCount} {followerWord}
                 </Link>
@@ -179,8 +184,9 @@ class UserCard extends Component {
               )}
             </Col>
             <Col align="left">
-              {this.state.following === "following" &&
-              this.props.user.whereIsFollower ? (
+              {(this.state.following === "following" &&
+                this.props.user.whereIsInfluencer) ||
+              !this.props.user.privateProfile ? (
                 <Link to={`/influencers/${this.props.user.username}`}>
                   {this.state.influencerCount} Following
                 </Link>

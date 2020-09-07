@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Row, Col, Badge, Form, Button } from "react-bootstrap";
+import { Col, Form, Button } from "react-bootstrap";
+import { secondsToDate } from "./Time";
 
 const Conversation = (props) => {
   const [messages, setMessages] = useState([]);
@@ -9,7 +10,6 @@ const Conversation = (props) => {
     if (!props.db || !props.currentId) {
       return;
     }
-
     const unsubscribe = props.db
       .collection("conversations")
       .doc(props.currentId.toString())
@@ -58,13 +58,24 @@ const Conversation = (props) => {
           if (message.user === props.currentUser) {
             return (
               <h1 key={message.time}>
-                <p className="speech-bubble">{message.message}</p>
+                <p className="speech-bubble">
+                  {message.message}
+                  <footer className="sub-text">
+                    {secondsToDate(message.time.seconds)}
+                  </footer>
+                </p>
               </h1>
             );
           } else {
             return (
-              <h1 className="left inline " key={message.time}>
-                <p className="gray-speech-bubble">{message.message}</p>
+              <h1 key={message.time}>
+                <p className="gray-speech-bubble">
+                  {message.message}
+                  <footer className="sub-text">
+                    {secondsToDate(message.time.seconds)}
+                  </footer>
+                  <footer className="sub-text">{message.user}</footer>
+                </p>
               </h1>
             );
           }
@@ -72,7 +83,7 @@ const Conversation = (props) => {
       </div>
       <Form.Group className="fixed-bottom">
         <Form.Row>
-          <Col lg="9">
+          <Col>
             <Form.Control
               size="lg"
               type="text"

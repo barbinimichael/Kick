@@ -4,7 +4,7 @@ import API from "../api/api";
 
 import { Button, Toast, Col, Row } from "react-bootstrap";
 import personFill from "bootstrap-icons/icons/person-fill.svg";
-import Time from "./Time";
+import { Time } from "./Time";
 
 class FollowingNotification extends Component {
   state = { show: true };

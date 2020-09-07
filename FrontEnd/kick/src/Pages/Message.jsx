@@ -11,6 +11,8 @@ const Message = (props) => {
   const [currentId, setCurrentId] = useState();
   const [currentUser, setCurrentUser] = useState("");
 
+  console.log("Message current id", currentId);
+
   useEffect(() => {
     if (props.meUser.username) {
       setCurrentUser(props.meUser.username);
@@ -41,35 +43,6 @@ const Message = (props) => {
           newIds.push([doc.id, users.toString()]);
         });
         setIds(newIds);
-        // if (props.meUser.username) {
-        //   setCurrentUser(props.meUser.username);
-        //   var newConversationDetails = db.collection("conversation-details");
-        //   var query = newConversationDetails.where(
-        //     "users",
-        //     "array-contains",
-        //     props.meUser.username
-        //   );
-        //   query
-        //     .withConverter(usersConverter)
-        //     .get()
-        //     .then(function (querySnapshot) {
-        //       let ids = [];
-        //       console.log("Users converted", querySnapshot);
-        //       querySnapshot.forEach(function (doc) {
-        //         let users = doc.data().users;
-        //         let index = users.indexOf(props.meUser.username);
-        //         if (index > -1) {
-        //           users.splice(index, 1);
-        //         }
-        //         console.log("doc", users.toString());
-        //         ids.push([doc.id, users.toString()]);
-        //       });
-        //       setIds(ids);
-        //     })
-        //     .catch(function (error) {
-        //       console.log("Error getting documents: ", error);
-        //     });
-        // }
       });
     return () => {
       unsubscribe();
