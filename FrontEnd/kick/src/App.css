@@ -187,11 +187,12 @@
 }
 
 .footer {
+  text-align: center;
   position: fixed;
-  left: 10%;
+  left: 0;
+  right: 0;
   bottom: 0;
-  width: 90%;
+  z-index: 1030;
   background-color: white;
   color: white;
-  text-align: left;
 }

@@ -4,35 +4,32 @@ import plusCircleFill from "bootstrap-icons/icons/pencil.svg";
 import CreateConversation from "./CreateConversation";
 
 const ConversationPane = (props) => {
-  const [currentUser, setCurrentUser] = useState("");
   const [seePopup, setSeePopup] = useState(false);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (props.ids[0] && props.currentUser) {
-      console.log("Conversation pane current user", props.currentUser);
+    if (props.ids[0]) {
       console.log("Conversation pane ids", props.ids);
-      setCurrentUser(props.currentUser);
       props.onSelect(props.ids[0][0]);
     }
-  }, [props.ids, props.currentUser]);
+  }, [props.ids]);
 
   const handleClick = useCallback(
-    (e) => {
+    (e, newSearch) => {
       console.log("HANDLE CLICK");
       e.preventDefault();
+      newSearch.push(props.currentUser);
       if (props.db) {
         console.log("add conversation");
         props.db
           .collection("conversation-details")
-          .add({ users: [props.currentUser, search] })
+          .add({ users: newSearch })
           .then((documentRef) => {
             props.onSelect(documentRef);
           });
         setSeePopup(false);
       }
     },
-    [props, currentUser, search, currentUser]
+    [props]
   );
 
   return (
@@ -76,7 +73,6 @@ const ConversationPane = (props) => {
         show={seePopup}
         onClose={() => setSeePopup(false)}
         onCreate={handleClick}
-        onChange={setSearch}
       />
     </React.Fragment>
   );

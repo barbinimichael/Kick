@@ -1,6 +1,6 @@
-# Kick
+# Kick Social Media Platform
 
-Social Media Project
+Kick is a platform being designed to help music creators be able to share their work with others in a social-media like experience. The goal is to be able to bring together musicians to foster a collaborative environment as well as help musicians advertise their work and profit from it. This project was a result of personal interest in getting to learn full-stack development as well as a personal passion for making music.
 
 ## Front End
 
@@ -19,8 +19,6 @@ Read more at: https://github.com/barbinimichael/Kick/blob/master/FrontEnd/README
 - Explore page for viewing random posts
 - Search for other users and posts
 - Recieve notifications about interactions (following requests and others liking posts)
-
----
 
 ## Back End & Database
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Col, Form, Button } from "react-bootstrap";
+import { Col, Form, Button, InputGroup, Row } from "react-bootstrap";
 import { secondsToDate } from "./Time";
 
 const Conversation = (props) => {
@@ -81,9 +81,9 @@ const Conversation = (props) => {
           }
         })}
       </div>
-      <Form.Group className="fixed-bottom">
-        <Form.Row>
-          <Col>
+      <Row className="sticky-top fixed-bottom">
+        <Col lg="9">
+          <InputGroup className="mb-3">
             <Form.Control
               size="lg"
               type="text"
@@ -92,12 +92,12 @@ const Conversation = (props) => {
               }}
               value={newMessage}
             />
-          </Col>
-          <Col>
-            <Button onClick={handleSubmit}>Submit</Button>
-          </Col>
-        </Form.Row>
-      </Form.Group>
+          </InputGroup>
+        </Col>
+        <Col lg="3">
+          <Button onClick={handleSubmit}>Submit</Button>
+        </Col>
+      </Row>
     </React.Fragment>
   );
 };
