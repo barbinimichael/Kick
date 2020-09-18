@@ -18,6 +18,12 @@ class Feed extends Component {
     this.createFeed();
   }
 
+  componentDidUpdate(props) {
+    if (this.props.feedURL !== props.feedURL) {
+      this.setState({ feed: [], page: 0, totalPages: 1 }, this.createFeed);
+    }
+  }
+
   handleScroll = (e) => {
     if (
       document.getElementById("feed").getBoundingClientRect().bottom <=

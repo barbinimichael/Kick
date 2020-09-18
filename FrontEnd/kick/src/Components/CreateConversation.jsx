@@ -66,7 +66,7 @@ const CreateConversation = (props) => {
       <Modal.Body>
         {currentSearch !== "" && (
           <AutoSuggest
-            feedURL={`/api/applicationUsers/search?search=username:*${currentSearch}*&`}
+            feedURL={`/api/applicationUsers/search?search=${currentSearch}&`}
             onClick={(s) => {
               if (!totalSearch.includes(s)) {
                 setTotalSearch(totalSearch.concat(s));

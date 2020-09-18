@@ -5,7 +5,7 @@ import axios from "axios";
 // https://api.kick-share.com/
 
 export default axios.create({
-  baseURL: `http://localhost:8080/`,
+  baseURL: `https://api.kick-share.com/`,
   headers: {
     Authorization: localStorage["Authorization"],
     "Content-Type": "application/json",
