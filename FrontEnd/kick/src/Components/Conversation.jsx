@@ -32,8 +32,8 @@ const Conversation = (props) => {
   const handleSubmit = useCallback(
     (e) => {
       // e.preventDefault();
-      if (props.db) {
-        console.log("add message");
+      if (props.db && newMessage !== "" && props.currentId) {
+        console.log("add message", props.currentId);
         props.db
           .collection("conversations")
           .doc(props.currentId.toString())
@@ -58,31 +58,30 @@ const Conversation = (props) => {
           if (message.user === props.currentUser) {
             return (
               <h1 key={message.time}>
-                <p className="speech-bubble">
+                <span className="speech-bubble">
                   {message.message}
-                  <footer className="sub-text">
+                  <p className="sub-text">
                     {secondsToDate(message.time.seconds)}
-                  </footer>
-                </p>
+                  </p>
+                </span>
               </h1>
             );
           } else {
             return (
               <h1 key={message.time}>
-                <p className="gray-speech-bubble">
+                <span className="gray-speech-bubble">
                   {message.message}
-                  <footer className="sub-text">
-                    {secondsToDate(message.time.seconds)}
-                  </footer>
-                  <footer className="sub-text">{message.user}</footer>
-                </p>
+                  <p className="sub-text">
+                    {message.user}, {secondsToDate(message.time.seconds)}
+                  </p>
+                </span>
               </h1>
             );
           }
         })}
       </div>
       <Row className="sticky-top fixed-bottom">
-        <Col lg="9">
+        <Col xl="11" lg="9" md="9" sm="9" xs="9">
           <InputGroup className="mb-3">
             <Form.Control
               size="lg"
@@ -94,7 +93,7 @@ const Conversation = (props) => {
             />
           </InputGroup>
         </Col>
-        <Col lg="3">
+        <Col xl="1" lg="3" md="3" sm="3" xs="3">
           <Button onClick={handleSubmit}>Submit</Button>
         </Col>
       </Row>

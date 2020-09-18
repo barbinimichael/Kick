@@ -1,17 +1,23 @@
-import React, { useState } from "react";
-import {
-  InputGroup,
-  FormControl,
-  Button,
-  Modal,
-  Toast,
-  Row,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { InputGroup, FormControl, Button, Modal, Row } from "react-bootstrap";
+import deepEqual from "deep-equal";
+
 import AutoSuggest from "./AutoSuggest";
+import UserSuggestionToast from "./UserSuggestionToast";
 
 const CreateConversation = (props) => {
   const [currentSearch, setCurrentSearch] = useState("");
   const [totalSearch, setTotalSearch] = useState([]);
+  const [previousConversations, setPreviousConversations] = useState([]);
+
+  useEffect(() => {
+    if (props.ids[0]) {
+      let users = [];
+      props.ids.map((id) => users.push(id[1]));
+      console.log("users", users);
+      setPreviousConversations(users);
+    }
+  }, [props.ids]);
 
   return (
     <Modal
@@ -42,10 +48,18 @@ const CreateConversation = (props) => {
       <Modal.Body>
         <Row inline>
           {totalSearch.length > 0 &&
-            totalSearch.map((s) => (
-              <Toast>
-                <Toast.Header>{s}</Toast.Header>
-              </Toast>
+            totalSearch.map((s, index) => (
+              <UserSuggestionToast
+                key={index}
+                user={s}
+                onDelete={() => {
+                  console.log("Total search before deletion", totalSearch);
+                  let newSearch = totalSearch;
+                  newSearch = newSearch.filter((search) => search !== s);
+                  setTotalSearch(newSearch);
+                  console.log("Total search after deletion", totalSearch);
+                }}
+              />
             ))}
         </Row>
       </Modal.Body>
@@ -54,7 +68,10 @@ const CreateConversation = (props) => {
           <AutoSuggest
             feedURL={`/api/applicationUsers/search?search=username:*${currentSearch}*&`}
             onClick={(s) => {
-              setTotalSearch(totalSearch.concat(s));
+              if (!totalSearch.includes(s)) {
+                setTotalSearch(totalSearch.concat(s));
+              }
+
               console.log("Total search", totalSearch);
             }}
           />
@@ -64,11 +81,33 @@ const CreateConversation = (props) => {
         <Button
           variant="primary"
           onClick={(e) => {
+            console.log(
+              "Previous Conversations from create conversation",
+              previousConversations
+            );
+            console.log(
+              "Clicked add conversation, current user",
+              props.currentUser
+            );
             if (totalSearch.length > 0) {
-              props.onCreate(e, totalSearch);
-            } else {
-              props.onClose();
+              let unique = true;
+              let sortTotalSearch = totalSearch.sort();
+              sortTotalSearch = sortTotalSearch.filter(
+                (e) => e !== props.currentUser
+              );
+
+              previousConversations.map(
+                (c) =>
+                  (unique = unique && !deepEqual(c.sort(), sortTotalSearch))
+              );
+
+              if (unique && sortTotalSearch.length > 0) {
+                props.onCreate(e, sortTotalSearch);
+                return;
+              }
             }
+            console.log("message already exists!");
+            props.onClose();
           }}
         >
           Create conversation

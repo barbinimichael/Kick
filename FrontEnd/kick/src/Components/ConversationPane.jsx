@@ -58,7 +58,7 @@ const ConversationPane = (props) => {
                 {props.ids ? (
                   props.ids.map((id, index) => (
                     <Nav.Item key={index}>
-                      <Nav.Link eventKey={index}>{id[1]}</Nav.Link>
+                      <Nav.Link eventKey={index}>{id[1].toString()}</Nav.Link>
                     </Nav.Item>
                   ))
                 ) : (
@@ -73,6 +73,8 @@ const ConversationPane = (props) => {
         show={seePopup}
         onClose={() => setSeePopup(false)}
         onCreate={handleClick}
+        ids={props.ids}
+        currentUser={props.currentUser}
       />
     </React.Fragment>
   );

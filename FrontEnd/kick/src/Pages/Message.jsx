@@ -40,7 +40,7 @@ const Message = (props) => {
           }
           console.log("doc", doc);
           console.log("user string", users.toString());
-          newIds.push([doc.id, users.toString()]);
+          newIds.push([doc.id, users]);
         });
         setIds(newIds);
       });
