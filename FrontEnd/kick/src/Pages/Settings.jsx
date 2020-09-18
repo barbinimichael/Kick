@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Form, Col, Button, Alert, Modal } from "react-bootstrap";
+import { InputGroup, Image, Form, Col, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
+import eyeFill from "bootstrap-icons/icons/eye-fill.svg";
+import eye from "bootstrap-icons/icons/eye.svg";
 
 import { checkEmail, checkPassword } from "../Components/CheckValidInput";
 import { logout } from "../Actions/AuthenticationAction";
@@ -20,6 +22,8 @@ class Settings extends Component {
     success: "",
     error: "",
     popup: false,
+    confirmPassword: "",
+    showPassword: false,
   };
 
   changeAttr = (evt, attr) => {
@@ -36,6 +40,11 @@ class Settings extends Component {
       let error = checkPassword(this.state[attr]);
       if (error !== "") {
         this.setState({ error });
+        return;
+      }
+      // check password and confirmed password match
+      if (this.state.password !== this.state.confirmPassword) {
+        this.setState({ error: "Passwords matching" });
         return;
       }
     }
@@ -109,6 +118,11 @@ class Settings extends Component {
       });
   };
 
+  showPassword = () => {
+    this.setState({ showPassword: !this.state.showPassword });
+    console.log("password show after click", this.state.showPassword);
+  };
+
   render() {
     console.log("render state", this.state);
     return (
@@ -124,17 +138,45 @@ class Settings extends Component {
                 </p>
               </div>
               <InLineForm
+                name="username"
                 description="username"
                 handleChange={this.handleChange}
                 handleSubmit={this.changeAttr}
                 current={this.props.meUser.username}
               ></InLineForm>
               <InLineForm
-                description="password"
+                name="password"
+                description={this.state.showPassword ? "text" : "password"}
                 handleChange={this.handleChange}
                 handleSubmit={this.changeAttr}
                 current="********"
               ></InLineForm>
+              <Form.Row>
+                <Col className="mb-2">Confirm password</Col>
+                <Col>
+                  <Form.Label
+                    htmlFor="inlineFormInputGroup"
+                    srOnly
+                  ></Form.Label>
+                  <InputGroup className="mb-2">
+                    <Form.Control
+                      type={this.state.showPassword ? "text" : "password"}
+                      placeholder="Confirm password"
+                      onChange={this.handleChange}
+                      name="confirmPassword"
+                    />
+                  </InputGroup>
+                </Col>
+                <Col className="mb-2">
+                  <Button variant="outline-primary" onClick={this.showPassword}>
+                    {this.state.showPassword ? (
+                      <Image src={eyeFill} />
+                    ) : (
+                      <Image src={eye} />
+                    )}
+                  </Button>
+                </Col>
+              </Form.Row>
               <Form>
                 <Form.Text className="text-muted">
                   Password must be 8-20 characters. Include numbers, letters,
@@ -143,18 +185,21 @@ class Settings extends Component {
               </Form>
               <hr className="hr-line" />
               <InLineForm
+                name="email"
                 description="email"
                 handleChange={this.handleChange}
                 handleSubmit={this.changeAttr}
                 current={this.props.meUser.email}
               ></InLineForm>
               <InLineForm
+                name="city"
                 description="city"
                 handleChange={this.handleChange}
                 handleSubmit={this.changeAttr}
                 current={this.props.meUser.city}
               ></InLineForm>
               <InLineForm
+                name="country"
                 description="country"
                 handleChange={this.handleChange}
                 handleSubmit={this.changeAttr}
@@ -239,7 +284,7 @@ class Settings extends Component {
               </a>
               <a
                 target="_blank"
-                href="https://quiet-inlet-83310.herokuapp.com/"
+                href="https://api.kick-share.com/"
                 rel="noopener noreferrer"
               >
                 API

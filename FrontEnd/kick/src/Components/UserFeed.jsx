@@ -29,6 +29,7 @@ class UserFeed extends Component {
       url: this.props.feedURL + `page=${this.state.page}&size=10`,
     })
       .then((response) => {
+        console.log(response);
         let feed = response.data.content;
         this.setState({
           feed: this.state.feed.concat(feed),

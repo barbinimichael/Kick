@@ -75,7 +75,8 @@ class Search extends Component {
             {(this.state.search !== "") &
             (this.state.selectedOption === "userToggle") ? (
               <UserFeed
-                feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*&`}
+                feedURL={`/api/applicationUsers/search?search=${this.state.search}&`}
+                // feedURL={`/api/applicationUsers/search?search=username:*${this.state.search}*&`}
                 meUser={this.props.meUser}
               />
             ) : (

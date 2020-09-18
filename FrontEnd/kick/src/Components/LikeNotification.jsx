@@ -4,7 +4,7 @@ import API from "../api/api";
 
 import Toast from "react-bootstrap/Toast";
 import heartFill from "bootstrap-icons/icons/heart-fill.svg";
-import Time from "./Time";
+import { Time } from "./Time";
 
 class LikeNotification extends Component {
   state = { show: true };

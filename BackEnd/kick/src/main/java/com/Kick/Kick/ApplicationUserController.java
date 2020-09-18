@@ -60,7 +60,8 @@ public class ApplicationUserController extends Controller {
     //        false);
     //    builder.with(publicProfile);
     Specification<ApplicationUser> spec = builder.build();
-    Page<ApplicationUser> preliminary = applicationUserRepository.findAll(spec, pageable);
+    // Page<ApplicationUser> preliminary = applicationUserRepository.findAll(spec, pageable);
+    Page<ApplicationUser> preliminary = applicationUserRepository.findByUsernameContainingIgnoreCase(search, pageable);
     return ResponseEntity.ok(preliminary.map(ApplicationUser::generatePubliclyVisibleUser));
   }
 

@@ -52,6 +52,7 @@ class Post extends Component {
   };
 
   render() {
+    const postDate = new Date(this.props.post.postDate);
     return (
       <Card>
         <Card.Header>
@@ -71,7 +72,15 @@ class Post extends Component {
             <React.Fragment></React.Fragment>
           )}
         </Card.Header>
-        <Card.Img variant="top" src={logo} />
+        <Card.Img
+          variant="top"
+          src={this.props.post.imageURL}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = logo;
+          }}
+          alt="broken, reverting to default"
+        />
         <Card.Body>
           <Button variant="link" onClick={this.onLike}>
             {this.props.liked ? (
@@ -93,7 +102,11 @@ class Post extends Component {
           <Card.Subtitle className="mb-2 text-muted">
             {this.props.post.city}, {this.props.post.country}
           </Card.Subtitle>
-          <footer>{this.props.post.postDate}</footer>
+          <footer>
+            {postDate.toLocaleDateString() +
+              " " +
+              postDate.toLocaleTimeString()}
+          </footer>
         </Card.Body>
         <InputGroup className="mb-3">
           <FormControl

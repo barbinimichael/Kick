@@ -10,6 +10,16 @@ class UserPage extends Component {
   state = { user: [] };
 
   componentDidMount() {
+    this.getUser();
+  }
+
+  componentDidUpdate(props) {
+    if (this.props !== props) {
+      this.getUser();
+    }
+  }
+
+  getUser = () => {
     API({
       method: "get",
       url: `/api/applicationUsers/username/${this.props.match.params.username}`,
@@ -21,7 +31,7 @@ class UserPage extends Component {
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   render() {
     return (

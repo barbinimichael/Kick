@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Form, Button, Col, Nav, Alert } from "react-bootstrap";
+import { Image, Form, Button, Col, Nav, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
 import speaker from "bootstrap-icons/icons/speaker.svg";
+import eyeFill from "bootstrap-icons/icons/eye-fill.svg";
+import eye from "bootstrap-icons/icons/eye.svg";
 
+import history from "../Components/History";
 import Page from "../Components/Page";
 import { register, resetLogin } from "../Actions/AuthenticationAction";
 import { checkEmail, checkPassword } from "../Components/CheckValidInput";
@@ -11,6 +14,7 @@ class Registration extends Component {
   state = {
     username: "",
     password: "",
+    confirmPassword: "",
     email: "",
     firstName: "",
     lastName: "",
@@ -19,13 +23,18 @@ class Registration extends Component {
     privateProfile: false,
     error: false,
     missingValue: "",
+    passwordConfirmError: "",
+    showValue: false,
   };
 
   handleRegistration = (evt) => {
     evt.preventDefault();
     let data = { ...this.state };
+    delete data.confirmPassword;
+    delete data.passwordConfirmError;
     delete data.error;
     delete data.missingValue;
+    delete data.showValue;
 
     let missingValue = checkEmail(data.email);
     if (missingValue !== "") {
@@ -37,6 +46,14 @@ class Registration extends Component {
     if (missingValue !== "") {
       this.setState({ missingValue });
       return;
+    }
+
+    // check password and confirmed password match
+    if (this.state.password !== this.state.confirmPassword) {
+      this.setState({ passwordConfirmError: "Passwords do not match!" });
+      return;
+    } else {
+      this.setState({ passwordConfirmError: "" });
     }
 
     // check no missing fields
@@ -68,7 +85,16 @@ class Registration extends Component {
 
   componentDidMount() {
     this.props.resetLogin();
+    if (this.props.loggedIn) {
+      history.push("/");
+      window.location.reload(true);
+    }
   }
+
+  showPassword = () => {
+    this.setState({ showPassword: !this.state.showPassword });
+    console.log("password show after click", this.state.showPassword);
+  };
 
   render() {
     return (
@@ -95,14 +121,35 @@ class Registration extends Component {
                     />
                   </Form.Group>
                 </Form.Row>
-
                 <Form.Row>
                   <Form.Group as={Col} controlId="formGridPassword">
                     <Form.Control
-                      type="password"
+                      type={this.state.showPassword ? "text" : "password"}
                       placeholder="Password"
                       onChange={this.handleChange}
                       name="password"
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="formGridShow">
+                    <Button
+                      variant="outline-primary"
+                      onClick={this.showPassword}
+                    >
+                      {this.state.showPassword ? (
+                        <Image src={eyeFill} />
+                      ) : (
+                        <Image src={eye} />
+                      )}
+                    </Button>
+                  </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                  <Form.Group as={Col} controlId="formGridConfirmPassword">
+                    <Form.Control
+                      type={this.state.showPassword ? "text" : "password"}
+                      placeholder="Confirm password"
+                      onChange={this.handleChange}
+                      name="confirmPassword"
                     />
                     <Form.Text className="text-muted">
                       Password must be 8-20 characters. Include numbers,
@@ -110,7 +157,6 @@ class Registration extends Component {
                     </Form.Text>
                   </Form.Group>
                 </Form.Row>
-
                 {this.props.errorUsername ? (
                   <Alert variant="danger">
                     <p className="italic mb-0">
@@ -120,7 +166,6 @@ class Registration extends Component {
                 ) : (
                   <React.Fragment></React.Fragment>
                 )}
-
                 <Form.Row>
                   <Form.Group as={Col} controlId="formGridEmail">
                     <Form.Control
@@ -131,7 +176,6 @@ class Registration extends Component {
                     />
                   </Form.Group>
                 </Form.Row>
-
                 {this.props.errorEmail ? (
                   <Alert variant="danger">
                     <p className="italic mb-0">
@@ -141,7 +185,6 @@ class Registration extends Component {
                 ) : (
                   <React.Fragment></React.Fragment>
                 )}
-
                 <Form.Row>
                   <Form.Group as={Col} controlId="formGridFirstName">
                     <Form.Control
@@ -161,7 +204,6 @@ class Registration extends Component {
                     />
                   </Form.Group>
                 </Form.Row>
-
                 <Form.Row>
                   <Form.Group as={Col} controlId="formGridCity">
                     <Form.Control
@@ -181,7 +223,6 @@ class Registration extends Component {
                     />
                   </Form.Group>
                 </Form.Row>
-
                 <Form.Group id="formGridPrivate">
                   <Form.Check
                     type="checkbox"
@@ -190,7 +231,6 @@ class Registration extends Component {
                     name="privateProfile"
                   />
                 </Form.Group>
-
                 {this.props.errorRegister ? (
                   <Alert variant="danger">
                     <p className="italic mb-0 center">An error has occurred</p>
@@ -198,7 +238,6 @@ class Registration extends Component {
                 ) : (
                   <React.Fragment></React.Fragment>
                 )}
-
                 {this.state.missingValue ? (
                   <Alert variant="danger">
                     <p className="italic mb-0 center">
@@ -208,7 +247,15 @@ class Registration extends Component {
                 ) : (
                   <React.Fragment></React.Fragment>
                 )}
-
+                {this.state.passwordConfirmError ? (
+                  <Alert variant="danger">
+                    <p className="italic mb-0 center">
+                      {this.state.passwordConfirmError}
+                    </p>
+                  </Alert>
+                ) : (
+                  <React.Fragment></React.Fragment>
+                )}
                 <Button
                   variant="primary"
                   type="submit"
@@ -232,6 +279,7 @@ class Registration extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    loggedIn: state.loggedIn,
     errorRegister: state.errorRegister,
     errorUsername: state.errorUsername,
     errorEmail: state.errorEmail,

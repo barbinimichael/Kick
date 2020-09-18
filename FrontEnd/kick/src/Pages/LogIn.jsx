@@ -5,6 +5,7 @@ import speaker from "bootstrap-icons/icons/speaker.svg";
 
 import Page from "../Components/Page";
 
+import history from "../Components/History";
 import { login, resetRegistration } from "../Actions/AuthenticationAction";
 
 class SignIn extends Component {
@@ -31,6 +32,11 @@ class SignIn extends Component {
   componentDidMount() {
     if (!this.props.registered) {
       this.props.resetRegistration();
+    }
+    console.log("login props.loggedIn", this.props.loggedIn);
+    if (this.props.loggedIn) {
+      history.push("/");
+      window.location.reload(true);
     }
   }
 

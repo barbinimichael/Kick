@@ -5,7 +5,7 @@ const InLineForm = (props) => {
   return (
     <Form>
       <Form.Row className="align-items-center">
-        <Col className="mb-2">Change {props.description}</Col>
+        <Col className="mb-2">Change {props.name}</Col>
         <Col>
           <Form.Label htmlFor="inlineFormInputGroup" srOnly></Form.Label>
           <InputGroup className="mb-2">

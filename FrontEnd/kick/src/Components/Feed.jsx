@@ -5,34 +5,43 @@ import Post from "./Post";
 import API from "../api/api";
 
 class Feed extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      feed: [],
-      liked: [],
-      privateProfile: false,
-      page: 0,
-      totalPages: 1,
-    };
+  state = {
+    feed: [],
+    liked: [],
+    privateProfile: false,
+    page: 0,
+    totalPages: 1,
+  };
+
+  componentDidMount() {
+    document.addEventListener("scroll", this.handleScroll);
     this.createFeed();
   }
 
   componentDidUpdate(props) {
-    if (this.props !== props) {
-      this.setState(
-        {
-          page: 0,
-          totalPages: 1,
-          feed: [],
-          liked: [],
-          privateProfile: false,
-        },
-        this.createFeed
-      );
+    if (this.props.feedURL !== props.feedURL) {
+      this.setState({ feed: [], page: 0, totalPages: 1 }, this.createFeed);
     }
   }
 
+  handleScroll = (e) => {
+    if (
+      document.getElementById("feed").getBoundingClientRect().bottom <=
+        window.innerHeight + 1 &&
+      this.state.feed.length > 0 &&
+      this.state.totalPages > 1
+    ) {
+      this.createFeed();
+    }
+  };
+
+  componentWillUnmount() {
+    document.removeEventListener("scroll", this.handleScroll);
+  }
+
   createFeed = () => {
+    console.log("Feed state", this.state);
+
     // check that not requesting if no more pages
     if (this.state.page >= this.state.totalPages) {
       return;
@@ -43,7 +52,6 @@ class Feed extends Component {
       url: this.props.feedURL + `page=${this.state.page}&size=10`,
     })
       .then((response) => {
-        console.log("create feed response", response);
         let feed = response.data.content;
         this.setState({ feed: this.state.feed.concat(feed) });
         this.setState({ totalPages: response.data.totalPages });
@@ -82,8 +90,6 @@ class Feed extends Component {
 
     let modified = feed.map((post, index) => {
       if (post.id === postId) {
-        console.log("mathicng postId", postId);
-        console.log("matching index", index);
         newIndex = index;
         return newPost;
       } else {
@@ -136,28 +142,10 @@ class Feed extends Component {
     });
   };
 
-  componentDidMount() {
-    document.addEventListener("scroll", this.handleScroll);
-  }
-
-  handleScroll = (e) => {
-    if (
-      document.getElementById("feed").getBoundingClientRect().bottom <=
-      window.innerHeight + 1
-    ) {
-      this.createFeed();
-    }
-  };
-
-  componentWillUnmount() {
-    document.removeEventListener("scroll", this.handleScroll);
-  }
-
   render() {
-    console.log("Feed", this.state.feed);
     return (
       <div onScroll={this.handleScroll} id="feed">
-        {this.state.feed && this.state.feed[0] != undefined ? (
+        {this.state.feed && this.state.feed[0] !== undefined ? (
           this.state.feed.map((post, index) => (
             <Post
               key={post.id}

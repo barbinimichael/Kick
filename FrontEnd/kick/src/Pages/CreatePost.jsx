@@ -1,18 +1,23 @@
 import React, { Component } from "react";
-import { Row, Col, Form, Button } from "react-bootstrap";
-import Image from "react-bootstrap/Image";
+import { Row, Col, Form, Button, Image } from "react-bootstrap";
+import { v4 as uuidv4 } from "uuid";
 
 import API from "../api/api";
+import firebase from "../api/database";
 
 import Page from "../Components/Page";
 import history from "../Components/History";
 
 class CreatePost extends Component {
-  state = { image: "", caption: "", city: "", country: "" };
+  state = { image: "", imageURL: "", caption: "", city: "", country: "" };
+  storage = firebase.storage();
 
   handleFileSubmit = (event) => {
     event.preventDefault();
-    this.setState({ image: URL.createObjectURL(event.target.files[0]) });
+    const image = event.target.files[0];
+    this.setState({
+      image,
+    });
   };
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -20,28 +25,63 @@ class CreatePost extends Component {
   onPostSubmit = (e) => {
     e.preventDefault();
 
-    let data = {
-      caption: this.state.caption,
-      imageURL: "inDevelopment.com",
-      city: this.state.city,
-      country: this.state.country,
-      postDate: new Date(),
-    };
+    if (this.state.image === "") {
+      console.error(`not an image, the image file is a ${typeof imageAsFile}`);
+    }
+    const imageName = uuidv4() + "-" + this.state.image.name;
+    const uploadTask = this.storage
+      .ref(`/images/${imageName}`)
+      .put(this.state.image);
+    //initiates the firebase side uploading
+    uploadTask.on(
+      "state_changed",
+      (snapShot) => {
+        //takes a snap shot of the process as it is happening
+        console.log(snapShot);
+      },
+      (err) => {
+        //catches the errors
+        console.log(err);
+      },
+      () => {
+        // gets the functions from storage refences the image storage in firebase by the children
+        // gets the download url then sets the image from firebase as the value for the imgUrl key:
+        this.storage
+          .ref("images")
+          .child(imageName)
+          .getDownloadURL()
+          .then((fireBaseUrl) => {
+            this.setState({
+              imageURL: fireBaseUrl,
+            });
 
-    API({
-      method: "post",
-      url: "api/posts",
-      data: data,
-    })
-      .then((response) => {
-        console.log("response", response);
-        history.push("/");
-        window.location.reload(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        this.props.handleLogout();
-      });
+            console.log("Firebase image URL:", this.state.imageURL);
+
+            let data = {
+              caption: this.state.caption,
+              imageURL: this.state.imageURL,
+              city: this.state.city,
+              country: this.state.country,
+              postDate: new Date(),
+            };
+
+            API({
+              method: "post",
+              url: "api/posts",
+              data: data,
+            })
+              .then((response) => {
+                console.log("response", response);
+                history.push("/");
+                window.location.reload(true);
+              })
+              .catch((error) => {
+                console.log(error);
+                this.props.handleLogout();
+              });
+          });
+      }
+    );
   };
 
   render() {
@@ -54,7 +94,7 @@ class CreatePost extends Component {
             <Col>
               <Row xs="6" md="3" lg="1">
                 <Form.Group controlId="formImage">
-                  <Image src={this.state.image} roundedCircle fluid />
+                  <Image src={this.state.imageURL} roundedCircle fluid />
                 </Form.Group>
               </Row>
               <Row>

@@ -24,6 +24,7 @@ import CommentPage from "./Pages/CommentPage";
 import NoMatch from "./Components/NoMatch";
 import API from "./api/api";
 import { login, logout } from "./Actions/AuthenticationAction";
+import history from "./Components/History";
 
 class App extends Component {
   state = { user: [] };
@@ -38,6 +39,10 @@ class App extends Component {
         .then((response) => {
           console.log("Authentication checked");
           console.log(response);
+          if (window.location.pathname !== "/") {
+            history.push("/");
+            window.location.reload(true);
+          }
         })
         .catch((error) => {
           console.log("Could not check authentication");
@@ -78,7 +83,12 @@ class App extends Component {
             meUser={this.state.user}
           />
           <PrivateRoute path="/create-post" exact component={CreatePost} />
-          <PrivateRoute path="/message" exact component={Message} />
+          <PrivateRoute
+            path="/message"
+            exact
+            component={Message}
+            meUser={this.state.user}
+          />
           <PrivateRoute path="/explore" exact component={Explore} />
           <PrivateRoute
             path="/search"
