@@ -185,3 +185,15 @@
   margin-top: -10px;
   margin-right: -20px;
 }
+
+.home-warning-badge {
+  display: flex !important;
+  justify-content: center !important;
+  white-space: normal !important;
+  margin: 1rem auto;
+  height: fit-content;
+  max-width: 20rem;
+  line-height: 1.5 !important;
+  padding: 0.5rem !important;
+  font-size: 1rem !important;
+}

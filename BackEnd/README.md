@@ -4,7 +4,9 @@ The Kick API services the Kick Web Application.
 
 ## Deployment
 
-This project has been deployed at https://api.kick-share.com using Route 53 and EC2 from Amazon Web Service. Configured with HTTPS encryption. It has a mySQL database storing all data.
+~~This project has been deployed at https://api.kick-share.com using Route 53 and EC2 from Amazon Web Service. Configured with HTTPS encryption. It has a mySQL database storing all data.~~  
+Deployed at: https://quiet-inlet-83310.herokuapp.com/  
+_(This will cause boot-up times but I need my AWS free-tier for my next project)_
 
 ## Technologies
 

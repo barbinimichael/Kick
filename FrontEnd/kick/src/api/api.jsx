@@ -5,7 +5,7 @@ import axios from "axios";
 // https://api.kick-share.com/
 
 export default axios.create({
-  baseURL: `https://api.kick-share.com/`,
+  baseURL: `https://quiet-inlet-83310.herokuapp.com/`,
   headers: {
     Authorization: localStorage["Authorization"],
     "Content-Type": "application/json",

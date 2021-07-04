@@ -1,5 +1,10 @@
 package com.Kick.Kick;
 
+import static com.Kick.Kick.SecurityConstants.SIGN_IN_URL;
+import static com.Kick.Kick.SecurityConstants.SIGN_UP_URL;
+
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -7,24 +12,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.Kick.Kick.SecurityConstants.SIGN_IN_URL;
-import static com.Kick.Kick.SecurityConstants.SIGN_UP_URL;
-
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-  private ApplicationUserDetailsServiceImpl userDetailsService;
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
-  private ApplicationUserRepository applicationUserRepository;
+  private final ApplicationUserDetailsServiceImpl userDetailsService;
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final ApplicationUserRepository applicationUserRepository;
 
   @Autowired
   public SecurityConfiguration(ApplicationUserDetailsServiceImpl userDetailsService,

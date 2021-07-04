@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Image, Form, Button, Col, Nav, Alert } from "react-bootstrap";
+import { Image, Form, Button, Col, Nav, Alert, Badge } from "react-bootstrap";
 import { connect } from "react-redux";
 import speaker from "bootstrap-icons/icons/speaker.svg";
 import eyeFill from "bootstrap-icons/icons/eye-fill.svg";
@@ -265,6 +265,7 @@ class Registration extends Component {
                 </Button>
               </Form>
             </div>
+            <Badge className="home-warning-badge" variant="danger">Note: This is being run on a free Heroku dyno so you may have to wait for it to boot up after your first API request (~30 seconds) </Badge>
             <Nav className="justify-content-center" activeKey="/sign-in">
               <Nav.Item>
                 <Nav.Link href="/sign-in">Already an account? Log in!</Nav.Link>
